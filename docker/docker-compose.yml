@@ -1,0 +1,28 @@
+    version: '2'
+    
+    services:
+        web:
+            image: lavoweb/php-5.4
+            ports:
+                - "80:80"
+            volumes:
+                - ~/pyl/vm/www:/var/www/html
+                - ~/pyl/vm/conf/php.ini:/usr/local/etc/php/php.ini
+            links:
+                - db:db
+            environment:
+                - TZ=Europe/Paris
+        db:
+            image: mysql:5.5
+            volumes:
+                - ~/pyl/vm/mysql:/var/lib/mysql
+            ports:
+                - "3306:3306"
+            environment:
+                - MYSQL_ROOT_PASSWORD=root
+        myadmin:
+            image: phpmyadmin/phpmyadmin
+            ports:
+                - "8080:80"
+            links:
+                - db:db

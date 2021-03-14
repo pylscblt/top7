@@ -1,0 +1,38 @@
+#
+# pyl 10Mar2015
+#
+
+RewriteEngine On
+
+# Just for debug
+#RewriteRule (.*)\.php    /show.php?url=$1 
+#RewriteRule (.*)    show.php?url=%{REQUEST_FILENAME} [END]
+#RewriteRule (.*)    show.php?url=%{THE_REQUEST} [L]
+
+
+# Change /path/index.php to /path 
+RewriteCond %{THE_REQUEST} ^GET\s(.*/)index [NC]
+RewriteRule . %1 [NE,R=301,L]
+
+# Remove .php extension
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule (.*)     $1.php [L]
+
+# Redirect to https
+ReWriteCond %{SERVER_PORT} 80
+
+# 
+# remove comment for prod on OVH
+#RewriteRule ^(.*)$ https://www.topseven.fr/$1 [R=301,L]
+#
+
+Options -Indexes
+
+# Exclude .inc .html files
+<Files  ~ "\.(inc|html)$">
+  Order allow,deny
+  Deny from all
+</Files>
+

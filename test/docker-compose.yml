@@ -1,0 +1,31 @@
+version: '2'
+
+services:
+    web:
+        #image: php:7.1-apache
+        image: lamp_v7
+        ports:
+            - "80:80"
+        volumes:
+            - ../www:/var/www/html
+            - ./conf/php.ini:/usr/local/etc/php/php.ini
+            - ./conf/conf.php:/var/www/html/conf/conf.php
+        links:
+            - db:db
+        environment:
+            - TZ=Europe/Paris
+    db:
+        image: mysql:5.5
+        volumes:
+            - ./mysql:/var/lib/mysql
+        ports:
+            - "3306:3306"
+        environment:
+            - MYSQL_ROOT_PASSWORD=root
+    myadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - "8080:80"
+        links:
+            - db:db
+

@@ -1,0 +1,2 @@
+www/rss_blog.php 58 * * * * (toutes les heures)
+www/send_email_player.php 7 0,12 * * * (tous les jours à midi et minuit)

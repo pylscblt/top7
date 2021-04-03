@@ -297,6 +297,13 @@ select, input[type="submit"] {
   	background-color: #0000CC;
 }
 
+#RecordsButton {
+	background-color: red;
+}
+#RecordsButton:hover {
+	background-color: #cc0000;
+}
+
 #Rank7Button {
   	background-color: blue;
 }
@@ -752,7 +759,7 @@ tr.rank7_1:hover, tr.rank7_2:hover, tr.hover {
 	background-color: #C2C2C2; 
 }
 tr.rank7_3, tr.rank7_4 {
-    /background-color: #D8D8D8; 
+    background-color: #D8D8D8; 
 }
 tr.rank7_3:hover, tr.rank7_4:hover, tr.hover {
 	background-color: #C2C2C2; 

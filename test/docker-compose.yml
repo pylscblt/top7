@@ -9,7 +9,7 @@ services:
         volumes:
             - ../www:/var/www/html
             - ./conf/php.ini:/usr/local/etc/php/php.ini
-            - ./conf/conf.php:/var/www/html/conf/conf.php
+            - ../test/conf/conf.php:/var/www/html/conf/conf.php
         links:
             - db:db
         environment:

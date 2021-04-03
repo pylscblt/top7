@@ -400,8 +400,8 @@ function sql($login)
         $pdo = new PDO("mysql:dbname=$database;host=$server;charset=utf8", $user, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch (Exception $e) {
-        print_log("error", $function, $query);
-        error(__FUNCTION__, "(" . $function . ") " . $e->getMessage());
+        print_log("error", "sql", "db init");
+        error(__FUNCTION__, "(db init)" . $e->getMessage());
     }
 }
 
@@ -1042,6 +1042,7 @@ function get_selection_order($p)
     $title  = get_day_title($today);
     $status = c_msg_game_in_progress;
     $class  = "opened";
+    $ret    = "";
 
     // table.status
     $style = "font-family: Verdana, sans-serif; font-size: small; border-collapse: collapse; background-color: #FAFAE0; width: 90%;";
@@ -4826,22 +4827,39 @@ function put_player_link($p)
     echo "<td class=\"season_title\" align=\"left\" width=\"25%\">";
     echo $top7_season['title'];
     echo "</td>\n";
-    echo "<td class=\"season_title\" align=\"center\" width=\"20%\">";
 
     if (strrpos($_SERVER['REQUEST_URI'], "stats")) {
+        echo "<td class=\"season_title\" align=\"center\" width=\"10%\">";
         $action = "display";
         $title  = "Retour au TOP7";
+        $idbutton = "StatsButton";
+        echo "<form id=\"form_stats\" action=\"$action\" method=\"post\">\n";
+        echo "<input type=\"submit\" id=\"$idbutton\" class=\"selected\" value=\"$title\">\n";
+        echo "</form>\n";
+        echo "</td>\n";
+
+        echo "<td class=\"season_title\" align=\"center\" width=\"10%\">";
+        $action = "records";
+        $title  = "RECORDS Inter-SAISONS";
+        $idbutton = "RecordsButton";
+        echo "<form id=\"form_stats\" action=\"$action\" method=\"post\">\n";
+        echo "<input type=\"submit\" id=\"$idbutton\" class=\"selected\" value=\"$title\">\n";
+        echo "</form>\n";
+        echo "</td>\n";
+
     } else {
+
+        echo "<td class=\"season_title\" align=\"center\" width=\"20%\">";
         $action = "stats";
         $title  = "STATS Inter-EQUIPES !";
+        $idbutton = "StatsButton";
+        echo "<form id=\"form_stats\" action=\"$action\" method=\"post\">\n";
+        echo "<input type=\"submit\" id=\"$idbutton\" class=\"selected\" value=\"$title\">\n";
+        echo "</form>\n";
+        echo "</td>\n";
     }
 
-    $idbutton = "StatsButton";
-    echo "<form id=\"form_stats\" action=\"$action\" method=\"post\">\n";
-    echo "<input type=\"submit\" id=\"$idbutton\" class=\"selected\" value=\"$title\">\n";
-    echo "</form>\n";
 
-    echo "</td>\n";
     echo "<td align=\"right\" width=\"40%\">";
     if ($mode == c_admin) {
         display_select_params();
@@ -6877,6 +6895,18 @@ function print_info_register($p)
 
 }
 
+function put_form_nav_records($title, $display, $selected)
+{
+
+    $action   = "records";
+    $idbutton = "RecordsButton";
+
+    echo "<form id=\"form_stats\" action=\"$action\" method=\"post\">\n";
+    echo "<input type=\"submit\" id=\"$idbutton\" $selected value=\"$title\">\n";
+    echo "<input type=\"hidden\" name=\"display_stats\" value=\"$display\">\n";
+    echo "</form>\n";
+}
+
 function put_form_nav_stats($title, $display, $selected)
 {
 
@@ -6887,6 +6917,115 @@ function put_form_nav_stats($title, $display, $selected)
     echo "<input type=\"submit\" id=\"$idbutton\" $selected value=\"$title\">\n";
     echo "<input type=\"hidden\" name=\"display_stats\" value=\"$display\">\n";
     echo "</form>\n";
+}
+
+function put_nav_records($p)
+{
+
+    $to_display = 0;
+    if (isset($p['display_stats'])) {
+        $to_display = $p['display_stats'];
+    }
+
+    $class = "nav_stats";
+    echo "<table class=\"$class\" border=0>\n";
+    echo "<tr>\n";
+
+    echo "<td class=\"$class\">";
+
+    $title    = "Par équipe";
+    $display  = c_stats_by_team;
+    $selected = "";
+    if ($to_display == $display) {
+        $selected = "class=\"selected\"";
+    }
+
+    put_form_nav_records($title, $display, $selected);
+
+    echo "</td>\n";
+
+    echo "<td class=\"$class\">";
+
+    $title    = "Par joueur";
+    $display  = c_stats_by_player;
+    $selected = "";
+    if ($to_display == $display) {
+        $selected = "class=\"selected\"";
+    }
+
+    put_form_nav_records($title, $display, $selected);
+
+    echo "</td>\n";
+
+
+    echo "<td class=\"$class\">";
+
+    $title    = "Fun";
+    $display  = c_stats_fun;
+    $selected = "";
+    if ($to_display == $display) {
+        $selected = "class=\"selected\"";
+    }
+
+    put_form_nav_records($title, $display, $selected);
+
+    echo "</td>\n";
+
+    echo "<td class=\"$class\">";
+
+    $title    = "Extérieur";
+    $display  = c_stats_exterieur;
+    $selected = "";
+    if ($to_display == $display) {
+        $selected = "class=\"selected\"";
+    }
+
+    put_form_nav_records($title, $display, $selected);
+
+    echo "</td>\n";
+
+    echo "<td class=\"$class\">";
+
+    $title    = "Coiffeur";
+    $display  = c_stats_coiffeur;
+    $selected = "";
+    if ($to_display == $display) {
+        $selected = "class=\"selected\"";
+    }
+
+    put_form_nav_records($title, $display, $selected);
+
+    echo "</td>\n";
+
+    echo "<td class=\"$class\">";
+
+    $title    = "BOff !";
+    $display  = c_stats_BOff;
+    $selected = "";
+    if ($to_display == $display) {
+        $selected = "class=\"selected\"";
+    }
+
+    put_form_nav_records($title, $display, $selected);
+
+    echo "</td>\n";
+
+    echo "<td class=\"$class\">";
+
+    $title    = "14 !";
+    $display  = c_stats_14;
+    $selected = "";
+    if ($to_display == $display) {
+        $selected = "class=\"selected\"";
+    }
+
+    put_form_nav_records($title, $display, $selected);
+
+    echo "</td>\n";
+
+    echo "</tr>\n";
+    echo "</table>\n";
+
 }
 
 function put_nav_stats($p)
@@ -6901,12 +7040,9 @@ function put_nav_stats($p)
     echo "<table class=\"$class\" border=0>\n";
     echo "<tr>\n";
 
-    $idbutton = "StatsButton";
-
     echo "<td class=\"$class\">";
 
     $title    = "Par équipe";
-    $action   = "stats";
     $display  = c_stats_by_team;
     $selected = "";
     if ($to_display == $display) {
@@ -6920,7 +7056,6 @@ function put_nav_stats($p)
     echo "<td class=\"$class\">";
 
     $title    = "Par joueur";
-    $action   = "stats";
     $display  = c_stats_by_player;
     $selected = "";
     if ($to_display == $display) {
@@ -6934,7 +7069,6 @@ function put_nav_stats($p)
     echo "<td class=\"$class\">";
 
     $title    = "Moyenne";
-    $action   = "stats";
     $display  = c_stats_average;
     $selected = "";
     if ($to_display == $display) {
@@ -6948,7 +7082,6 @@ function put_nav_stats($p)
     echo "<td class=\"$class\">";
 
     $title    = "Fun";
-    $action   = "stats";
     $display  = c_stats_fun;
     $selected = "";
     if ($to_display == $display) {
@@ -6962,7 +7095,6 @@ function put_nav_stats($p)
     echo "<td class=\"$class\">";
 
     $title    = "Extérieur";
-    $action   = "stats";
     $display  = c_stats_exterieur;
     $selected = "";
     if ($to_display == $display) {
@@ -6976,7 +7108,6 @@ function put_nav_stats($p)
     echo "<td class=\"$class\">";
 
     $title    = "Coiffeur";
-    $action   = "stats";
     $display  = c_stats_coiffeur;
     $selected = "";
     if ($to_display == $display) {
@@ -6990,7 +7121,6 @@ function put_nav_stats($p)
     echo "<td class=\"$class\">";
 
     $title    = "BOff !";
-    $action   = "stats";
     $display  = c_stats_BOff;
     $selected = "";
     if ($to_display == $display) {
@@ -7004,7 +7134,6 @@ function put_nav_stats($p)
     echo "<td class=\"$class\">";
 
     $title    = "14 !";
-    $action   = "stats";
     $display  = c_stats_14;
     $selected = "";
     if ($to_display == $display) {
@@ -7017,6 +7146,48 @@ function put_nav_stats($p)
 
     echo "</tr>\n";
     echo "</table>\n";
+}
+
+function records($p)
+{
+
+    $display = $p['display_stats'];
+
+    $title = "RECORDS";
+    echo "<table class=\"player\">\n";
+    echo "<tr class=\"player\">\n";
+    echo "<th class=\"stats\" colspan=\"3\">$title <font size=2><i>(toutes saisons confondues)</i></font></th>\n";
+    echo "</tr>\n";
+    echo "</table>\n";
+
+    switch($display) {
+        case c_stats_by_team:
+            $data = get_stats_by_team();
+            put_record_stats_by_team($data);
+            break;
+        case c_stats_by_player:
+            $datas = get_stats_by_player();
+            put_record_stats_by_player($datas);
+            break;
+        case c_stats_average:
+            break;
+        case c_stats_fun:
+            break;
+        case c_stats_exterieur:
+            break;
+        case c_stats_coiffeur:
+            break;
+        case c_stats_BOff:
+            break;
+        case c_stats_14:
+            break;
+        default:
+            $datas = get_stats_by_player();
+            put_record_stats_by_player($datas);
+            break;
+    }
+
+
 }
 
 function stats($p)
@@ -7080,58 +7251,105 @@ function stats($p)
     }
 }
 
-function get_stats_by_team($season)
+function get_stats_by_team($season = null)
 {
 
     $query = "select ";
-    $query .= "team_player.name, ";
-    $query .= "sum(point) as pts, ";
-    $query .= "format(sum(point)/(sum(J)/7),2) as avg_day, "; // moyenne par journée
-    $query .= "sum(fun) as fun, ";
-    $query .= "format(sum(J)/7,0) as J, ";
-    $query .= "sum(G) as G, ";
-    $query .= "sum(N) as N, ";
-    $query .= "sum(P) as P, ";
-    $query .= "sum(pm)-sum(pe) as diff, ";
-    $query .= "sum(bd) as bd, ";
-    $query .= "sum(bo) as bo, ";
-    $query .= "sum(bo)+sum(bd) as bonus, ";
-    $query .= "sum(pc) as pc, ";
-    $query .= "sum(ve) as ve, ";
-    $query .= "sum(if(eq=14,1,0)) as n14 ";
-    $query .= "from `team_player` join player ";
-    $query .= "where team_player.season=$season and player.team=team_player.team_idx ";
-    $query .= "group by name order by PTS desc, G desc, ve desc, n14 desc, N desc, diff desc";
+    if ($season == null) {
+        $query .= "team_player.name, ";
+        $query .= "season.title as season, ";
+        $query .= "sum(point) as pts, ";
+        $query .= "format(sum(point)/(sum(J)/7),2) as avg_day, "; // moyenne par journée
+        $query .= "sum(fun) as fun, ";
+        $query .= "format(sum(J)/7,0) as J, ";
+        $query .= "sum(G) as G, ";
+        $query .= "sum(N) as N, ";
+        $query .= "sum(P) as P, ";
+        $query .= "sum(pm)-sum(pe) as diff, ";
+        $query .= "sum(bd) as bd, ";
+        $query .= "sum(bo) as bo, ";
+        $query .= "sum(bo)+sum(bd) as bonus, ";
+        $query .= "sum(pc) as pc, ";
+        $query .= "sum(ve) as ve, ";
+        $query .= "sum(if(eq=14,1,0)) as n14 ";
+        $query .= "from `team_player` ";
+        $query .= "join `player` on team_player.team_idx=player.team ";
+        $query .= "join `season` on team_player.season=season.Id ";
+        $query .= "group by name order by PTS desc, G desc, ve desc, n14 desc, N desc, diff desc";   
+    } else {
+        $query .= "team_player.name, ";
+        $query .= "sum(point) as pts, ";
+        $query .= "format(sum(point)/(sum(J)/7),2) as avg_day, "; // moyenne par journée
+        $query .= "sum(fun) as fun, ";
+        $query .= "format(sum(J)/7,0) as J, ";
+        $query .= "sum(G) as G, ";
+        $query .= "sum(N) as N, ";
+        $query .= "sum(P) as P, ";
+        $query .= "sum(pm)-sum(pe) as diff, ";
+        $query .= "sum(bd) as bd, ";
+        $query .= "sum(bo) as bo, ";
+        $query .= "sum(bo)+sum(bd) as bonus, ";
+        $query .= "sum(pc) as pc, ";
+        $query .= "sum(ve) as ve, ";
+        $query .= "sum(if(eq=14,1,0)) as n14 ";
+        $query .= "from `team_player` join player ";
+        $query .= "where team_player.season=$season and player.team=team_player.team_idx ";
+        $query .= "group by name order by PTS desc, G desc, ve desc, n14 desc, N desc, diff desc";    
+    }
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_by_player($season)
+function get_stats_by_player($season = null)
 {
 
     $query = "select ";
-    $query .= "pseudo,  ";
-    $query .= "team_player.name as team, ";
-    $query .= "point as pts, ";
-    $query .= "format(point/J,2) as avg, ";
-    $query .= "fun, ";
-    $query .= "J, ";
-    $query .= "G, ";
-    $query .= "N, ";
-    $query .= "P, ";
-    $query .= "pm-pe as diff, ";
-    $query .= "bd, ";
-    $query .= "bo, ";
-    $query .= "bo+bd as bonus, ";
-    $query .= "pc, ";
-    $query .= "eq, ";
-    $query .= "ve ";
-    $query .= "from `player` join `team_player` ";
-    $query .= "where player.season=$season and player.team=team_player.team_idx ";
-    $query .= "order by PTS desc, G desc, ve desc, eq desc, N desc, diff desc";
+    if ($season == null) {
+        $query .= "pseudo, ";
+        $query .= "team_player.name as team, ";
+        $query .= "season.title as season, ";
+        $query .= "point as pts, ";
+        $query .= "format(point/J,2) as avg, ";
+        $query .= "fun, ";
+        $query .= "J, ";
+        $query .= "G, ";
+        $query .= "N, ";
+        $query .= "P, ";
+        $query .= "pm-pe as diff, ";
+        $query .= "bd, ";
+        $query .= "bo, ";
+        $query .= "bo+bd as bonus, ";
+        $query .= "pc, ";
+        $query .= "eq, ";
+        $query .= "ve ";
+        $query .= "from `team_player` ";
+        $query .= "join `player` on team_player.team_idx=player.team ";
+        $query .= "join `season` on team_player.season=season.Id ";
+        $query .= "order by PTS desc, G desc, ve desc, eq desc, N desc, diff desc";   
+    } else {
+        $query .= "pseudo, ";
+        $query .= "team_player.name as team, ";
+        $query .= "point as pts, ";
+        $query .= "format(point/J,2) as avg, ";
+        $query .= "fun, ";
+        $query .= "J, ";
+        $query .= "G, ";
+        $query .= "N, ";
+        $query .= "P, ";
+        $query .= "pm-pe as diff, ";
+        $query .= "bd, ";
+        $query .= "bo, ";
+        $query .= "bo+bd as bonus, ";
+        $query .= "pc, ";
+        $query .= "eq, ";
+        $query .= "ve ";
+        $query .= "from `player` join `team_player` ";
+        $query .= "where player.season=$season and player.team=team_player.team_idx ";
+        $query .= "order by PTS desc, G desc, ve desc, eq desc, N desc, diff desc";    
+    }
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_average($season)
+function get_stats_average($season = null)
 {
 
     $query = "select ";
@@ -7157,7 +7375,7 @@ function get_stats_average($season)
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_fun($season)
+function get_stats_fun($season = null)
 {
 
     $query = "select ";
@@ -7184,7 +7402,7 @@ function get_stats_fun($season)
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_exterieur($season)
+function get_stats_exterieur($season = null)
 {
 
     $query = "select ";
@@ -7210,7 +7428,7 @@ function get_stats_exterieur($season)
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_coiffeur($season)
+function get_stats_coiffeur($season = null)
 {
 
     $query = "select ";
@@ -7236,7 +7454,7 @@ function get_stats_coiffeur($season)
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_BOff($season)
+function get_stats_BOff($season = null)
 {
 
     $query = "select ";
@@ -7262,7 +7480,7 @@ function get_stats_BOff($season)
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_14($season)
+function get_stats_14($season = null)
 {
 
     $query = "select ";
@@ -7287,6 +7505,88 @@ function get_stats_14($season)
     #$query .= "and d14 <> '' ";
     $query .= "order by ifnull(d14, 26) asc, eq desc, pts desc";
     return pdo_fetch(__FUNCTION__, c_all, $query);
+}
+
+function put_record_stats_by_team($datas) {
+
+    echo "<table class=\"day\" border=0>\n";
+    // Line 1 :   #  Equipe Saison PTS (Moy) (fun) Bonus J G N P +/- BO BD Ge 14! Co
+    // -----------------------------------------------------------------------------
+    $class = "stats";
+    echo "<tr>\n";
+    echo "<th class=\"$class\">#</th>\n";
+    echo "<th class=\"$class\">Equipe</th>\n";
+    echo "<th class=\"$class\">Saison</th>\n";
+    echo "<th class=\"$class\">PTS</th>\n"; // PTS
+    echo "<th class=\"fun_stats\">";
+    put_abbr("(Moy)", "Moyenne des points par journée");
+    echo "</th>\n";
+    echo "<th class=\"fun_stats\">";
+    put_abbr("(fun)", "Points fun");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("Bonus", "Bonus");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("J", "Nombre de journées");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("G", "Gagné");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("N", "Nul");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("P", "Perdu");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("+/-", "Différence de points");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("BO", "Bonus Offensif");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("BD", "Bonus Defensif");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("Ge", "Victoires Extérieures");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("14!", "14 équipes différentes !");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("Co", "Points coiffeur");
+    echo "</th>\n";
+    echo "</tr>\n";
+
+    $idx    = 1;
+    $ranks  = array("odd", "even");
+    $class0 = "point";
+    $class1 = "point_bold";
+    foreach ($datas as $data) {
+        $rank = $ranks[$idx % 2];
+        echo "<tr class=\"$rank\">\n";
+        echo "<td class=\"point\">$idx</td>\n";
+        echo "<td class=\"point\">" . $data['name'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['season'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['pts'] . "</td>\n";
+        echo "<td class=\"fun\">(" . $data['avg_day'] . ")</td>\n";
+        echo "<td class=\"fun\">(" . $data['fun'] . ")</td>\n";
+        echo "<td class=\"point\">" . $data['bonus'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['J'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['G'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['N'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['P'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['diff'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['bo'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['bd'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['ve'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['n14'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['pc'] . "</td>\n";
+        $idx++;
+    }
+
+    echo "</table>\n";
 }
 
 function put_stats_by_team($datas)
@@ -7367,6 +7667,91 @@ function put_stats_by_team($datas)
         $idx++;
     }
 
+    echo "</table>\n";
+}
+
+function put_record_stats_by_player($datas)
+{
+
+    echo "<table class=\"day\" border=0>\n";
+    // Line 1 :   #  Joueur Equipe Saison PTS (Moy) (fun) Bonus J G N P +/- BO BD Ge Eq Co
+    // -----------------------------------------------------------------------------------
+    $class = "stats";
+    echo "<tr>\n";
+    echo "<th class=\"$class\">#</th>\n";
+    echo "<th class=\"$class\">Joueur</th>\n";
+    echo "<th class=\"$class\">Equipe</th>\n";
+    echo "<th class=\"$class\">Saison</th>\n";
+    echo "<th class=\"$class\">PTS</th>\n"; // PTS
+    echo "<th class=\"fun_stats\">";
+    put_abbr("(Moy)", "Moyenne des points par journée");
+    echo "</th>\n";
+    echo "<th class=\"fun_stats\">";
+    put_abbr("(fun)", "Points fun");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("Bonus", "Bonus");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("J", "Nombre de journées");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("G", "Gagné");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("N", "Nul");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("P", "Perdu");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("+/-", "Différence de points");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("BO", "Bonus Offensif");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("BD", "Bonus Defensif");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("Ge", "Victoires Extérieures");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("Eq", "Nombre d'équipes différentes");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("Co", "Points coiffeur");
+    echo "</th>\n";
+    echo "</tr>\n";
+
+    $idx    = 1;
+    $ranks  = array("odd", "even");
+    $class0 = "point";
+    $class1 = "point_bold";
+    $exaequo = new Exaequo();
+    foreach ($datas as $data) {
+        $rank = $ranks[$idx % 2];
+        echo "<tr class=\"$rank\">\n";
+        echo "<td class=\"point\">" . $exaequo->proc($data['pts']) . "</td>\n";
+        echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['team'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['season'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['pts'] . "</td>\n";
+        echo "<td class=\"fun\">(" . $data['avg'] . ")</td>\n";
+        echo "<td class=\"fun\">(" . $data['fun'] . ")</td>\n";
+        echo "<td class=\"point\">" . $data['bonus'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['J'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['G'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['N'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['P'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['diff'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['bo'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['bd'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['ve'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['eq'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['pc'] . "</td>\n";
+        $idx++;
+    }
     echo "</table>\n";
 }
 
@@ -7947,6 +8332,10 @@ function put_stats_14($datas)
     echo "</table>\n";
 }
 
+function put_records_legend($display)
+{
+}
+
 function put_stats_legend($display)
 {
 
@@ -7975,6 +8364,22 @@ function put_stats_info($p)
     echo "<a href=\"javascript:unhide('pointsFun');\">Points fun</a>";
     echo "</div>\n";
     put_stats_legend($display);
+    echo "</td></tr>\n";
+    echo "</table>\n";
+}
+
+function put_records_info($p)
+{
+
+    $display = $p['display_stats'];
+    echo "<br>\n";
+    echo "<table class=\"nav\" border=0>\n";
+    echo "<tr><td>\n";
+    echo "<div class=\"info\">\n";
+    echo "<a href=\"javascript:unhide('legend');\">Légendes</a> - ";
+    echo "<a href=\"javascript:unhide('pointsFun');\">Points fun</a>";
+    echo "</div>\n";
+    put_records_legend($display);
     echo "</td></tr>\n";
     echo "</table>\n";
 }

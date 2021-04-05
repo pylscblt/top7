@@ -4846,9 +4846,7 @@ function put_player_link($p)
         echo "<input type=\"submit\" id=\"$idbutton\" class=\"selected\" value=\"$title\">\n";
         echo "</form>\n";
         echo "</td>\n";
-    }
-
-    elseif (strrpos($_SERVER['REQUEST_URI'], "records")) {
+    } elseif (strrpos($_SERVER['REQUEST_URI'], "records")) {
         echo "<td class=\"season_title\" align=\"center\" width=\"10%\">";
         $action = "display";
         $title  = "Retour au TOP7";
@@ -4866,7 +4864,6 @@ function put_player_link($p)
         echo "<input type=\"submit\" id=\"$idbutton\" class=\"selected\" value=\"$title\">\n";
         echo "</form>\n";
         echo "</td>\n";
-
     } else {
 
         echo "<td class=\"season_title\" align=\"center\" width=\"20%\">";
@@ -7014,7 +7011,6 @@ function put_nav_records($p)
 
     echo "</tr>\n";
     echo "</table>\n";
-
 }
 
 function put_nav_stats($p)
@@ -7142,6 +7138,13 @@ function records($p)
 
     $display = $p['display_stats'];
 
+    $season  = 0;
+    if (isset($p['season'])) {
+        $season = $p['season'];
+    }
+
+    $top7_season = get_top7_season_by_id($season);
+
     $title = "RECORDS";
     echo "<table class=\"player\">\n";
     echo "<tr class=\"player\">\n";
@@ -7149,34 +7152,34 @@ function records($p)
     echo "</tr>\n";
     echo "</table>\n";
 
-    switch($display) {
+    switch ($display) {
         case c_stats_by_team:
-            $data = get_stats_by_team();
-            put_record_stats_by_team($data);
+            $data = get_records_by_team($season);
+            put_records_by_team($data);
             break;
         case c_stats_by_player:
-            $datas = get_stats_by_player();
-            put_record_stats_by_player($datas);
+            $datas = get_records_by_player($season);
+            put_records_by_player($datas);
             break;
         case c_stats_exterieur:
-            $datas = get_stats_exterieur();
-            put_record_stats_exterieur($datas);
+            $datas = get_records_exterieur($season);
+            put_records_exterieur($datas);
             break;
         case c_stats_coiffeur:
-            $datas = get_stats_coiffeur();
-            put_record_stats_coiffeur($datas);
+            $datas = get_records_coiffeur($season);
+            put_records_coiffeur($datas);
             break;
         case c_stats_BOff:
-            $datas = get_stats_BOff();
-            put_record_stats_BOff($datas);
+            $datas = get_records_BOff($season);
+            put_records_BOff($datas);
             break;
         case c_stats_14:
-            $datas = get_stats_14();
-            put_record_stats_14($datas);
+            $datas = get_records_14($season);
+            put_records_14($datas);
             break;
         default:
-            $datas = get_stats_by_player();
-            put_record_stats_by_player($datas);
+            $datas = get_records_by_player($season);
+            put_records_by_player($datas);
             break;
     }
 }
@@ -7242,109 +7245,115 @@ function stats($p)
     }
 }
 
-function get_stats_by_team($season = null)
+function get_records_by_team($season)
 {
-
     $query = "select ";
-    if ($season == null) {
-        $query .= "team_player.name, ";
-        $query .= "season.title as season, ";
-        $query .= "sum(point) as pts, ";
-        $query .= "format(sum(point)/(sum(J)/7),2) as avg_day, "; // moyenne par journée
-        $query .= "sum(fun) as fun, ";
-        $query .= "format(sum(J)/7,0) as J, ";
-        $query .= "sum(G) as G, ";
-        $query .= "sum(N) as N, ";
-        $query .= "sum(P) as P, ";
-        $query .= "sum(pm)-sum(pe) as diff, ";
-        $query .= "sum(bd) as bd, ";
-        $query .= "sum(bo) as bo, ";
-        $query .= "sum(bo)+sum(bd) as bonus, ";
-        $query .= "sum(pc) as pc, ";
-        $query .= "sum(ve) as ve, ";
-        $query .= "sum(if(eq=14,1,0)) as n14 ";
-        $query .= "from `team_player` ";
-        $query .= "join `player` on team_player.team_idx=player.team ";
-        $query .= "join `season` on team_player.season=season.Id ";
-        $query .= "group by name order by PTS desc, G desc, ve desc, n14 desc, N desc, diff desc ";
-        $query .= "limit 3";   
-    } else {
-        $query .= "team_player.name, ";
-        $query .= "sum(point) as pts, ";
-        $query .= "format(sum(point)/(sum(J)/7),2) as avg_day, "; // moyenne par journée
-        $query .= "sum(fun) as fun, ";
-        $query .= "format(sum(J)/7,0) as J, ";
-        $query .= "sum(G) as G, ";
-        $query .= "sum(N) as N, ";
-        $query .= "sum(P) as P, ";
-        $query .= "sum(pm)-sum(pe) as diff, ";
-        $query .= "sum(bd) as bd, ";
-        $query .= "sum(bo) as bo, ";
-        $query .= "sum(bo)+sum(bd) as bonus, ";
-        $query .= "sum(pc) as pc, ";
-        $query .= "sum(ve) as ve, ";
-        $query .= "sum(if(eq=14,1,0)) as n14 ";
-        $query .= "from `team_player` join player ";
-        $query .= "where team_player.season=$season and player.team=team_player.team_idx ";
-        $query .= "group by name order by PTS desc, G desc, ve desc, n14 desc, N desc, diff desc";    
-    }
+    $query .= "team_player.name, ";
+    $query .= "season.title as season, ";
+    $query .= "sum(point) as pts, ";
+    $query .= "format(sum(point)/(sum(J)/7),2) as avg_day, "; // moyenne par journée
+    $query .= "sum(fun) as fun, ";
+    $query .= "format(sum(J)/7,0) as J, ";
+    $query .= "sum(G) as G, ";
+    $query .= "sum(N) as N, ";
+    $query .= "sum(P) as P, ";
+    $query .= "sum(pm)-sum(pe) as diff, ";
+    $query .= "sum(bd) as bd, ";
+    $query .= "sum(bo) as bo, ";
+    $query .= "sum(bo)+sum(bd) as bonus, ";
+    $query .= "sum(pc) as pc, ";
+    $query .= "sum(ve) as ve, ";
+    $query .= "sum(if(eq=14,1,0)) as n14 ";
+    $query .= "from `team_player` ";
+    $query .= "join `player` on team_player.team_idx=player.team ";
+    $query .= "join `season` on team_player.season=season.Id ";
+    $query .= "and team_player.season < $season ";
+    $query .= "group by team_player.team_idx order by PTS desc, G desc, ve desc, n14 desc, N desc, diff desc ";
+    #$query .= "limit 3";   
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_by_player($season = null)
+function get_stats_by_team($season)
 {
-
     $query = "select ";
-    if ($season == null) {
-        $query .= "pseudo, ";
-        $query .= "team_player.name as team, ";
-        $query .= "season.title as season, ";
-        $query .= "point as pts, ";
-        $query .= "format(point/J,2) as avg, ";
-        $query .= "fun, ";
-        $query .= "J, ";
-        $query .= "G, ";
-        $query .= "N, ";
-        $query .= "P, ";
-        $query .= "pm-pe as diff, ";
-        $query .= "bd, ";
-        $query .= "bo, ";
-        $query .= "bo+bd as bonus, ";
-        $query .= "pc, ";
-        $query .= "eq, ";
-        $query .= "ve ";
-        $query .= "from `team_player` ";
-        $query .= "join `player` on team_player.team_idx=player.team ";
-        $query .= "join `season` on team_player.season=season.Id ";
-        $query .= "order by PTS desc, G desc, ve desc, eq desc, N desc, diff desc ";   
-        $query .= "limit 3";
-    } else {
-        $query .= "pseudo, ";
-        $query .= "team_player.name as team, ";
-        $query .= "point as pts, ";
-        $query .= "format(point/J,2) as avg, ";
-        $query .= "fun, ";
-        $query .= "J, ";
-        $query .= "G, ";
-        $query .= "N, ";
-        $query .= "P, ";
-        $query .= "pm-pe as diff, ";
-        $query .= "bd, ";
-        $query .= "bo, ";
-        $query .= "bo+bd as bonus, ";
-        $query .= "pc, ";
-        $query .= "eq, ";
-        $query .= "ve ";
-        $query .= "from `player` join `team_player` ";
-        $query .= "where player.season=$season and player.team=team_player.team_idx ";
-        $query .= "order by PTS desc, G desc, ve desc, eq desc, N desc, diff desc";    
-    }
+    $query .= "team_player.name, ";
+    $query .= "sum(point) as pts, ";
+    $query .= "format(sum(point)/(sum(J)/7),2) as avg_day, "; // moyenne par journée
+    $query .= "sum(fun) as fun, ";
+    $query .= "format(sum(J)/7,0) as J, ";
+    $query .= "sum(G) as G, ";
+    $query .= "sum(N) as N, ";
+    $query .= "sum(P) as P, ";
+    $query .= "sum(pm)-sum(pe) as diff, ";
+    $query .= "sum(bd) as bd, ";
+    $query .= "sum(bo) as bo, ";
+    $query .= "sum(bo)+sum(bd) as bonus, ";
+    $query .= "sum(pc) as pc, ";
+    $query .= "sum(ve) as ve, ";
+    $query .= "sum(if(eq=14,1,0)) as n14 ";
+    $query .= "from `team_player` join player ";
+    $query .= "where team_player.season=$season and player.team=team_player.team_idx ";
+    $query .= "group by name order by PTS desc, G desc, ve desc, n14 desc, N desc, diff desc";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_average($season = null)
+function get_records_by_player($season)
 {
 
+    $query = "select ";
+    $query .= "pseudo, ";
+    $query .= "team_player.name as team, ";
+    $query .= "season.title as season, ";
+    $query .= "point as pts, ";
+    $query .= "format(point/J,2) as avg, ";
+    $query .= "fun, ";
+    $query .= "J, ";
+    $query .= "G, ";
+    $query .= "N, ";
+    $query .= "P, ";
+    $query .= "pm-pe as diff, ";
+    $query .= "bd, ";
+    $query .= "bo, ";
+    $query .= "bo+bd as bonus, ";
+    $query .= "pc, ";
+    $query .= "eq, ";
+    $query .= "ve ";
+    $query .= "from `team_player` ";
+    $query .= "join `player` on team_player.team_idx=player.team ";
+    $query .= "join `season` on team_player.season=season.Id ";
+    $query .= "and team_player.season < $season ";
+    $query .= "order by PTS desc, G desc, ve desc, eq desc, N desc, diff desc ";
+    #$query .= "limit 3";
+    return pdo_fetch(__FUNCTION__, c_all, $query);
+}
+
+function get_stats_by_player($season)
+{
+    $query = "select ";
+    $query .= "pseudo, ";
+    $query .= "team_player.name as team, ";
+    $query .= "point as pts, ";
+    $query .= "format(point/J,2) as avg, ";
+    $query .= "fun, ";
+    $query .= "J, ";
+    $query .= "G, ";
+    $query .= "N, ";
+    $query .= "P, ";
+    $query .= "pm-pe as diff, ";
+    $query .= "bd, ";
+    $query .= "bo, ";
+    $query .= "bo+bd as bonus, ";
+    $query .= "pc, ";
+    $query .= "eq, ";
+    $query .= "ve ";
+    $query .= "from `player` join `team_player` ";
+    $query .= "where player.season=$season and player.team=team_player.team_idx ";
+    $query .= "order by PTS desc, G desc, ve desc, eq desc, N desc, diff desc";
+    return pdo_fetch(__FUNCTION__, c_all, $query);
+}
+
+function get_stats_average($season)
+{
     $query = "select ";
     $query .= "pseudo,  ";
     $query .= "team_player.name as team, ";
@@ -7368,9 +7377,8 @@ function get_stats_average($season = null)
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_fun($season = null)
+function get_stats_fun($season)
 {
-
     $query = "select ";
     $query .= "pseudo,  ";
     $query .= "team_player.name as team, ";
@@ -7395,209 +7403,226 @@ function get_stats_fun($season = null)
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_exterieur($season = null)
+function get_records_exterieur($season)
 {
     $query = "select ";
-    if ($season == null) {
-        $query .= "pseudo,  ";
-        $query .= "team_player.name as team, ";
-        $query .= "season.title as season, ";
-        $query .= "point as pts, ";
-        $query .= "fun, ";
-        $query .= "J, ";
-        $query .= "G, ";
-        $query .= "N, ";
-        $query .= "P, ";
-        $query .= "pm-pe as diff, ";
-        $query .= "bd, ";
-        $query .= "bo, ";
-        $query .= "bo+bd as bonus, ";
-        $query .= "pc, ";
-        $query .= "eq, ";
-        $query .= "ve ";
-        $query .= "from `team_player` ";
-        $query .= "join `player` on team_player.team_idx=player.team ";
-        $query .= "join `season` on team_player.season=season.Id ";
-        $query .= "and ve <> '' ";
-        $query .= "order by ve desc, G desc, N desc, PTS desc ";
-        $query .= "limit 3";
-    } else {
-        $query .= "pseudo,  ";
-        $query .= "team_player.name as team, ";
-        $query .= "point as pts, ";
-        $query .= "fun, ";
-        $query .= "J, ";
-        $query .= "G, ";
-        $query .= "N, ";
-        $query .= "P, ";
-        $query .= "pm-pe as diff, ";
-        $query .= "bd, ";
-        $query .= "bo, ";
-        $query .= "bo+bd as bonus, ";
-        $query .= "pc, ";
-        $query .= "eq, ";
-        $query .= "ve ";
-        $query .= "from `player` join `team_player` ";
-        $query .= "where player.season=$season and player.team=team_player.team_idx ";
-        $query .= "and ve <> '' ";
-        $query .= "order by ve desc, G desc, N desc, PTS desc";
-    }
+    $query .= "pseudo,  ";
+    $query .= "team_player.name as team, ";
+    $query .= "season.title as season, ";
+    $query .= "point as pts, ";
+    $query .= "fun, ";
+    $query .= "J, ";
+    $query .= "G, ";
+    $query .= "N, ";
+    $query .= "P, ";
+    $query .= "pm-pe as diff, ";
+    $query .= "bd, ";
+    $query .= "bo, ";
+    $query .= "bo+bd as bonus, ";
+    $query .= "pc, ";
+    $query .= "eq, ";
+    $query .= "ve ";
+    $query .= "from `team_player` ";
+    $query .= "join `player` on team_player.team_idx=player.team ";
+    $query .= "join `season` on team_player.season=season.Id ";
+    $query .= "and team_player.season < $season ";
+    $query .= "and ve <> '' ";
+    $query .= "order by ve desc, G desc, N desc, PTS desc ";
+    #$query .= "limit 3";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_coiffeur($season = null)
+function get_stats_exterieur($season)
 {
     $query = "select ";
-    if ($season == null) {
-        $query .= "pseudo,  ";
-        $query .= "team_player.name as team, ";
-        $query .= "season.title as season, ";
-        $query .= "point as pts, ";
-        $query .= "fun, ";
-        $query .= "J, ";
-        $query .= "G, ";
-        $query .= "N, ";
-        $query .= "P, ";
-        $query .= "pm-pe as diff, ";
-        $query .= "bd, ";
-        $query .= "bo, ";
-        $query .= "bo+bd as bonus, ";
-        $query .= "pc, ";
-        $query .= "eq, ";
-        $query .= "ve ";
-        $query .= "from `team_player` ";
-        $query .= "join `player` on team_player.team_idx=player.team ";
-        $query .= "join `season` on team_player.season=season.Id ";
-        $query .= "and pc <> '' ";
-        $query .= "order by pc desc, bo desc, bd desc, PTS desc ";
-        $query .= "limit 3";
-    } else {
-        $query .= "pseudo,  ";
-        $query .= "team_player.name as team, ";
-        $query .= "point as pts, ";
-        $query .= "fun, ";
-        $query .= "J, ";
-        $query .= "G, ";
-        $query .= "N, ";
-        $query .= "P, ";
-        $query .= "pm-pe as diff, ";
-        $query .= "bd, ";
-        $query .= "bo, ";
-        $query .= "bo+bd as bonus, ";
-        $query .= "pc, ";
-        $query .= "eq, ";
-        $query .= "ve ";
-        $query .= "from `player` join `team_player` ";
-        $query .= "where player.season=$season and player.team=team_player.team_idx ";
-        $query .= "and pc <> '' ";
-        $query .= "order by pc desc, bo desc, bd desc, PTS desc";
-    }
+    $query .= "pseudo,  ";
+    $query .= "team_player.name as team, ";
+    $query .= "point as pts, ";
+    $query .= "fun, ";
+    $query .= "J, ";
+    $query .= "G, ";
+    $query .= "N, ";
+    $query .= "P, ";
+    $query .= "pm-pe as diff, ";
+    $query .= "bd, ";
+    $query .= "bo, ";
+    $query .= "bo+bd as bonus, ";
+    $query .= "pc, ";
+    $query .= "eq, ";
+    $query .= "ve ";
+    $query .= "from `player` join `team_player` ";
+    $query .= "where player.season=$season and player.team=team_player.team_idx ";
+    $query .= "and ve <> '' ";
+    $query .= "order by ve desc, G desc, N desc, PTS desc";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_BOff($season = null)
+function get_records_coiffeur($season)
 {
     $query = "select ";
-    if ($season == null) {
-        $query .= "pseudo,  ";
-        $query .= "team_player.name as team, ";
-        $query .= "season.title as season, ";
-        $query .= "point as pts, ";
-        $query .= "fun, ";
-        $query .= "J, ";
-        $query .= "G, ";
-        $query .= "N, ";
-        $query .= "P, ";
-        $query .= "pm-pe as diff, ";
-        $query .= "bd, ";
-        $query .= "bo, ";
-        $query .= "bo+bd as bonus, ";
-        $query .= "pc, ";
-        $query .= "eq, ";
-        $query .= "ve ";
-        $query .= "from `team_player` ";
-        $query .= "join `player` on team_player.team_idx=player.team ";
-        $query .= "join `season` on team_player.season=season.Id ";
-        $query .= "and bo <> '' ";
-        $query .= "order by bo desc, bd desc, PTS desc ";
-        $query .= "limit 3";
-    } else {
-        $query .= "pseudo,  ";
-        $query .= "team_player.name as team, ";
-        $query .= "point as pts, ";
-        $query .= "fun, ";
-        $query .= "J, ";
-        $query .= "G, ";
-        $query .= "N, ";
-        $query .= "P, ";
-        $query .= "pm-pe as diff, ";
-        $query .= "bd, ";
-        $query .= "bo, ";
-        $query .= "bo+bd as bonus, ";
-        $query .= "pc, ";
-        $query .= "eq, ";
-        $query .= "ve ";
-        $query .= "from `player` join `team_player` ";
-        $query .= "where player.season=$season and player.team=team_player.team_idx ";
-        $query .= "and bo <> '' ";
-        $query .= "order by bo desc, bd desc, PTS desc";    
-    }
+    $query .= "pseudo,  ";
+    $query .= "team_player.name as team, ";
+    $query .= "season.title as season, ";
+    $query .= "point as pts, ";
+    $query .= "fun, ";
+    $query .= "J, ";
+    $query .= "G, ";
+    $query .= "N, ";
+    $query .= "P, ";
+    $query .= "pm-pe as diff, ";
+    $query .= "bd, ";
+    $query .= "bo, ";
+    $query .= "bo+bd as bonus, ";
+    $query .= "pc, ";
+    $query .= "eq, ";
+    $query .= "ve ";
+    $query .= "from `team_player` ";
+    $query .= "join `player` on team_player.team_idx=player.team ";
+    $query .= "join `season` on team_player.season=season.Id ";
+    $query .= "and team_player.season < $season ";
+    $query .= "and pc <> '' ";
+    $query .= "order by pc desc, bo desc, bd desc, PTS desc ";
+    #$query .= "limit 3";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_stats_14($season = null)
+function get_stats_coiffeur($season)
 {
     $query = "select ";
-    if ($season == null) {
-        $query .= "pseudo,  ";
-        $query .= "team_player.name as team, ";
-        $query .= "season.title as season, ";
-        $query .= "point as pts, ";
-        $query .= "fun, ";
-        $query .= "J, ";
-        $query .= "G, ";
-        $query .= "N, ";
-        $query .= "P, ";
-        $query .= "pm-pe as diff, ";
-        $query .= "bd, ";
-        $query .= "bo, ";
-        $query .= "bo+bd as bonus, ";
-        $query .= "pc, ";
-        $query .= "ve, ";
-        $query .= "eq, ";
-        $query .= "d14 ";
-        $query .= "from `team_player` ";
-        $query .= "join `player` on team_player.team_idx=player.team ";
-        $query .= "join `season` on team_player.season=season.Id ";
-        #$query .= "and d14 <> '' ";
-        $query .= "order by ifnull(d14, 26) asc, eq desc, pts desc ";    
-        $query .= "limit 3";
-    } else {
-        $query .= "pseudo,  ";
-        $query .= "team_player.name as team, ";
-        $query .= "point as pts, ";
-        $query .= "fun, ";
-        $query .= "J, ";
-        $query .= "G, ";
-        $query .= "N, ";
-        $query .= "P, ";
-        $query .= "pm-pe as diff, ";
-        $query .= "bd, ";
-        $query .= "bo, ";
-        $query .= "bo+bd as bonus, ";
-        $query .= "pc, ";
-        $query .= "ve, ";
-        $query .= "eq, ";
-        $query .= "d14 ";
-        $query .= "from `player` join `team_player` ";
-        $query .= "where player.season=$season and player.team=team_player.team_idx ";
-        #$query .= "and d14 <> '' ";
-        $query .= "order by ifnull(d14, 26) asc, eq desc, pts desc";
-    }
+    $query .= "pseudo,  ";
+    $query .= "team_player.name as team, ";
+    $query .= "point as pts, ";
+    $query .= "fun, ";
+    $query .= "J, ";
+    $query .= "G, ";
+    $query .= "N, ";
+    $query .= "P, ";
+    $query .= "pm-pe as diff, ";
+    $query .= "bd, ";
+    $query .= "bo, ";
+    $query .= "bo+bd as bonus, ";
+    $query .= "pc, ";
+    $query .= "eq, ";
+    $query .= "ve ";
+    $query .= "from `player` join `team_player` ";
+    $query .= "where player.season=$season and player.team=team_player.team_idx ";
+    $query .= "and pc <> '' ";
+    $query .= "order by pc desc, bo desc, bd desc, PTS desc";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function put_record_stats_by_team($datas) {
+function get_records_BOff($season)
+{
+    $query = "select ";
+    $query .= "pseudo,  ";
+    $query .= "team_player.name as team, ";
+    $query .= "season.title as season, ";
+    $query .= "point as pts, ";
+    $query .= "fun, ";
+    $query .= "J, ";
+    $query .= "G, ";
+    $query .= "N, ";
+    $query .= "P, ";
+    $query .= "pm-pe as diff, ";
+    $query .= "bd, ";
+    $query .= "bo, ";
+    $query .= "bo+bd as bonus, ";
+    $query .= "pc, ";
+    $query .= "eq, ";
+    $query .= "ve ";
+    $query .= "from `team_player` ";
+    $query .= "join `player` on team_player.team_idx=player.team ";
+    $query .= "join `season` on team_player.season=season.Id ";
+    $query .= "and team_player.season < $season ";
+    $query .= "and bo <> '' ";
+    $query .= "order by bo desc, bd desc, PTS desc ";
+    #$query .= "limit 3";
+    return pdo_fetch(__FUNCTION__, c_all, $query);
+}
+
+function get_stats_BOff($season)
+{
+    $query = "select ";
+    $query .= "pseudo,  ";
+    $query .= "team_player.name as team, ";
+    $query .= "point as pts, ";
+    $query .= "fun, ";
+    $query .= "J, ";
+    $query .= "G, ";
+    $query .= "N, ";
+    $query .= "P, ";
+    $query .= "pm-pe as diff, ";
+    $query .= "bd, ";
+    $query .= "bo, ";
+    $query .= "bo+bd as bonus, ";
+    $query .= "pc, ";
+    $query .= "eq, ";
+    $query .= "ve ";
+    $query .= "from `player` join `team_player` ";
+    $query .= "where player.season=$season and player.team=team_player.team_idx ";
+    $query .= "and bo <> '' ";
+    $query .= "order by bo desc, bd desc, PTS desc";
+    return pdo_fetch(__FUNCTION__, c_all, $query);
+}
+
+function get_records_14($season)
+{
+    $query = "select ";
+    $query .= "pseudo,  ";
+    $query .= "team_player.name as team, ";
+    $query .= "season.title as season, ";
+    $query .= "point as pts, ";
+    $query .= "fun, ";
+    $query .= "J, ";
+    $query .= "G, ";
+    $query .= "N, ";
+    $query .= "P, ";
+    $query .= "pm-pe as diff, ";
+    $query .= "bd, ";
+    $query .= "bo, ";
+    $query .= "bo+bd as bonus, ";
+    $query .= "pc, ";
+    $query .= "ve, ";
+    $query .= "eq, ";
+    $query .= "d14 ";
+    $query .= "from `team_player` ";
+    $query .= "join `player` on team_player.team_idx=player.team ";
+    $query .= "join `season` on team_player.season=season.Id ";
+    $query .= "and team_player.season < $season ";
+    #$query .= "and d14 <> '' ";
+    $query .= "order by ifnull(d14, 26) asc, eq desc, pts desc ";
+    #$query .= "limit 3";
+    return pdo_fetch(__FUNCTION__, c_all, $query);
+}
+
+function get_stats_14($season)
+{
+    $query = "select ";
+    $query .= "pseudo,  ";
+    $query .= "team_player.name as team, ";
+    $query .= "point as pts, ";
+    $query .= "fun, ";
+    $query .= "J, ";
+    $query .= "G, ";
+    $query .= "N, ";
+    $query .= "P, ";
+    $query .= "pm-pe as diff, ";
+    $query .= "bd, ";
+    $query .= "bo, ";
+    $query .= "bo+bd as bonus, ";
+    $query .= "pc, ";
+    $query .= "ve, ";
+    $query .= "eq, ";
+    $query .= "d14 ";
+    $query .= "from `player` join `team_player` ";
+    $query .= "where player.season=$season and player.team=team_player.team_idx ";
+    #$query .= "and d14 <> '' ";
+    $query .= "order by ifnull(d14, 26) asc, eq desc, pts desc";
+    return pdo_fetch(__FUNCTION__, c_all, $query);
+}
+
+function put_records_by_team($datas)
+{
 
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Equipe Saison PTS Bonus J G N P +/- BO BD Ge 14! Co
@@ -7649,7 +7674,8 @@ function put_record_stats_by_team($datas) {
     $class1 = "point_bold";
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        echo "<tr class=\"rank7_$idx\">\n";
+        #echo "<tr class=\"rank7_$idx\">\n";
+        echo "<tr class=\"$rank\">\n";
         echo "<td class=\"point\">$idx</td>\n";
         echo "<td class=\"point\">" . $data['name'] . "</td>\n";
         echo "<td class=\"point\">" . $data['season'] . "</td>\n";
@@ -7752,7 +7778,7 @@ function put_stats_by_team($datas)
     echo "</table>\n";
 }
 
-function put_record_stats_by_player($datas)
+function put_records_by_player($datas)
 {
 
     echo "<table class=\"day\" border=0>\n";
@@ -7807,7 +7833,8 @@ function put_record_stats_by_player($datas)
     $exaequo = new Exaequo();
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        echo "<tr class=\"rank7_$idx\">\n";
+        #echo "<tr class=\"rank7_$idx\">\n";
+        echo "<tr class=\"$rank\">\n";
         echo "<td class=\"point\">" . $exaequo->proc($data['pts']) . "</td>\n";
         echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
         echo "<td class=\"point\">" . $data['team'] . "</td>\n";
@@ -8075,7 +8102,7 @@ function put_stats_fun($datas)
     echo "</table>\n";
 }
 
-function put_record_stats_exterieur($datas)
+function put_records_exterieur($datas)
 {
 
     echo "<table class=\"day\" border=0>\n";
@@ -8130,7 +8157,8 @@ function put_record_stats_exterieur($datas)
     $exaequo = new Exaequo();
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        echo "<tr class=\"rank7_$idx\">\n";
+        #echo "<tr class=\"rank7_$idx\">\n";
+        echo "<tr class=\"$rank\">\n";
         echo "<td class=\"point\">" . $exaequo->proc($data['ve']) . "</td>\n";
         echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
         echo "<td class=\"point\">" . $data['team'] . "</td>\n";
@@ -8231,7 +8259,7 @@ function put_stats_exterieur($datas)
     echo "</table>\n";
 }
 
-function put_record_stats_coiffeur($datas)
+function put_records_coiffeur($datas)
 {
 
     echo "<table class=\"day\" border=0>\n";
@@ -8286,7 +8314,8 @@ function put_record_stats_coiffeur($datas)
     $exaequo = new Exaequo();
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        echo "<tr class=\"rank7_$idx\">\n";
+        #echo "<tr class=\"rank7_$idx\">\n";
+        echo "<tr class=\"$rank\">\n";
         echo "<td class=\"point\">" . $exaequo->proc($data['pc']) . "</td>\n";
         echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
         echo "<td class=\"point\">" . $data['team'] . "</td>\n";
@@ -8387,7 +8416,7 @@ function put_stats_coiffeur($datas)
     echo "</table>\n";
 }
 
-function put_record_stats_BOff($datas)
+function put_records_BOff($datas)
 {
 
     echo "<table class=\"day\" border=0>\n";
@@ -8442,7 +8471,8 @@ function put_record_stats_BOff($datas)
     $exaequo = new Exaequo();
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        echo "<tr class=\"rank7_$idx\">\n";
+        #echo "<tr class=\"rank7_$idx\">\n";
+        echo "<tr class=\"$rank\">\n";
         echo "<td class=\"point\">" . $exaequo->proc($data['bo']) . "</td>\n";
         echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
         echo "<td class=\"point\">" . $data['team'] . "</td>\n";
@@ -8543,7 +8573,7 @@ function put_stats_BOff($datas)
     echo "</table>\n";
 }
 
-function put_record_stats_14($datas)
+function put_records_14($datas)
 {
 
     echo "<table class=\"day\" border=0>\n";
@@ -8601,8 +8631,10 @@ function put_record_stats_14($datas)
     $exaequo = new Exaequo();
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        echo "<tr class=\"rank7_$idx\">\n";
-        echo "<td class=\"point\">" . $exaequo->proc($data['d14']) . "</td>\n";
+        #echo "<tr class=\"rank7_$idx\">\n";
+        echo "<tr class=\"$rank\">\n";
+        #echo "<td class=\"point\">" . $exaequo->proc($data['d14']) . "</td>\n";
+        echo "<td class=\"point\">" . $idx . "</td>\n";
         if ($data['d14'] < 14) {
             $class  = "point_italic";
             $class1 = $class;

@@ -15,5 +15,6 @@ Si deux ou plusieurs équipes se trouvent à égalité à l’issue de la phase 
 * Plus grand nombre d'essais marqués dans toutes les rencontres de la compétition ;
 * Nombre de forfaits n'ayant pas entraîné de forfait général de la compétition ;
 * Place obtenue la saison précédente dans le Championnat de France.
+
 Le classement officiel des championnats en cours de saison régulière est établi conformément aux principes prévus par le présent article 331 fixant les critères appliqués en cas d’égalité (y compris si les équipes concernés ne se sont rencontrées qu’une fois, ou un nombre inégal de fois en cas d’égalité à plus de deux équipes)
 

@@ -8058,7 +8058,7 @@ function put_stats_average($datas)
 function put_records_fun($datas)
 {
     echo "<table class=\"day\" border=0>\n";
-    // Line 1 :   #  Joueur Equipe Saison Pts Fun (Moy) PTS (Moy) Bonus J G N P +/- BO BD Ge Eq Co
+    // Line 1 :   #  Joueur Equipe Saison Pts Fun PTS Bonus J G N P +/- BO BD Ge Eq Co
     // ------------------------------------------------------------------
     $class = "stats";
     echo "<tr>\n";
@@ -8067,13 +8067,7 @@ function put_records_fun($datas)
     echo "<th class=\"$class\">Equipe</th>\n";
     echo "<th class=\"$class\">Saison</th>\n";
     echo "<th class=\"$class\">Points fun</th>\n"; // PTS
-    echo "<th class=\"fun_stats\">";
-    put_abbr("(Moy)", "Moyenne des points fun par journée");
-    echo "</th>\n";
     echo "<th class=\"$class\">PTS</th>\n";
-    echo "<th class=\"fun_stats\">";
-    put_abbr("(Moy)", "Moyenne des points par journée");
-    echo "</th>\n";
     echo "<th class=\"$class\">";
     put_abbr("Bonus", "Bonus");
     echo "</th>\n";
@@ -8123,9 +8117,7 @@ function put_records_fun($datas)
         echo "<td class=\"point\">" . $data['team'] . "</td>\n";
         echo "<td class=\"point\">" . $data['season'] . "</td>\n";
         echo "<td class=\"$class1\">" . $data['fun'] . "</td>\n";
-        echo "<td class=\"fun\">(" . $data['avg_fun'] . ")</td>\n";
         echo "<td class=\"$class1\">" . $data['pts'] . "</td>\n";
-        echo "<td class=\"fun\">(" . $data['avg'] . ")</td>\n";
         echo "<td class=\"point\">" . $data['bonus'] . "</td>\n";
         echo "<td class=\"point\">" . $data['J'] . "</td>\n";
         echo "<td class=\"$class1\">" . $data['G'] . "</td>\n";

@@ -6968,6 +6968,15 @@ function put_nav_records($p)
     put_form_nav_records($title, $display, $selected);
     echo "</td>\n";
 
+    echo "<td class=\"$class\">";
+    $title    = "Fun";
+    $display  = c_stats_fun;
+    $selected = "";
+    if ($to_display == $display) {
+        $selected = "class=\"selected\"";
+    }
+    put_form_nav_records($title, $display, $selected);
+    echo "</td>\n";
 
     echo "<td class=\"$class\">";
     $title    = "Extérieur";
@@ -7161,6 +7170,10 @@ function records($p)
             $datas = get_records_by_player($season);
             put_records_by_player($datas);
             break;
+        case c_stats_fun:
+            $datas = get_records_fun($season);
+            put_records_fun($datas);
+            break;
         case c_stats_exterieur:
             $datas = get_records_exterieur($season);
             put_records_exterieur($datas);
@@ -7299,7 +7312,6 @@ function get_stats_by_team($season)
 
 function get_records_by_player($season)
 {
-
     $query = "select ";
     $query .= "pseudo, ";
     $query .= "team_player.name as team, ";
@@ -7374,6 +7386,36 @@ function get_stats_average($season)
     $query .= "from `player` join `team_player` ";
     $query .= "where player.season=$season and player.team=team_player.team_idx ";
     $query .= "order by avg desc, PTS desc, G desc, ve desc, eq desc, N desc, diff desc";
+    return pdo_fetch(__FUNCTION__, c_all, $query);
+}
+
+function get_records_fun($season)
+{
+    $query = "select ";
+    $query .= "pseudo,  ";
+    $query .= "team_player.name as team, ";
+    $query .= "season.title as season, ";
+    $query .= "point as pts, ";
+    $query .= "format(point/J,2) as avg, ";
+    $query .= "fun, ";
+    $query .= "format(fun/J,2) as avg_fun, ";
+    $query .= "J, ";
+    $query .= "G, ";
+    $query .= "N, ";
+    $query .= "P, ";
+    $query .= "pm-pe as diff, ";
+    $query .= "bd, ";
+    $query .= "bo, ";
+    $query .= "bo+bd as bonus, ";
+    $query .= "pc, ";
+    $query .= "eq, ";
+    $query .= "ve ";
+    $query .= "from `team_player` ";
+    $query .= "join `player` on team_player.team_idx=player.team ";
+    $query .= "join `season` on team_player.season=season.Id ";
+    $query .= "and team_player.season < $season ";
+    $query .= "order by fun desc, PTS desc, G desc, ve desc, eq desc, N desc, diff desc ";
+    #$query .= "limit 3";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7780,7 +7822,6 @@ function put_stats_by_team($datas)
 
 function put_records_by_player($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Saison PTS Bonus J G N P +/- BO BD Ge Eq Co
     // -----------------------------------------------------------------------
@@ -8002,6 +8043,93 @@ function put_stats_average($datas)
         echo "<td class=\"$class1\">" . $data['avg'] . "</td>\n";
         echo "<td class=\"$class1\">" . $data['pts'] . "</td>\n";
         echo "<td class=\"fun\">(" . $data['fun'] . ")</td>\n";
+        echo "<td class=\"point\">" . $data['J'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['G'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['N'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['P'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['diff'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['bo'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['bd'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['ve'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['eq'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['pc'] . "</td>\n";
+        $idx++;
+    }
+    echo "</table>\n";
+}
+
+function put_records_fun($datas)
+{
+
+    echo "<table class=\"day\" border=0>\n";
+    // Line 1 :   #  Joueur Equipe Saison Pts Fun (Moy) PTS (Moy) Bonus J G N P +/- BO BD Ge Eq Co
+    // ------------------------------------------------------------------
+    $class = "stats";
+    echo "<tr>\n";
+    echo "<th class=\"$class\">#</th>\n";
+    echo "<th class=\"$class\">Joueur</th>\n";
+    echo "<th class=\"$class\">Equipe</th>\n";
+    echo "<th class=\"$class\">Saison</th>\n";
+    echo "<th class=\"$class\">Points fun</th>\n"; // PTS
+    echo "<th class=\"fun_stats\">";
+    put_abbr("(Moy)", "Moyenne des points fun par journée");
+    echo "</th>\n";
+    echo "<th class=\"$class\">PTS</th>\n";
+    echo "<th class=\"fun_stats\">";
+    put_abbr("(Moy)", "Moyenne des points par journée");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("Bonus", "Bonus");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("J", "Nombre de journées");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("G", "Gagné");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("N", "Nul");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("P", "Perdu");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("+/-", "Différence de points");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("BO", "Bonus Offensif");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("BD", "Bonus Defensif");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("Ge", "Victoires Extérieures");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("Eq", "Nombre d'équipes différentes");
+    echo "</th>\n";
+    echo "<th class=\"$class\">";
+    put_abbr("Co", "Points coiffeur");
+    echo "</th>\n";
+    echo "</tr>\n";
+
+    $idx    = 1;
+    $ranks  = array("odd", "even");
+    $class0 = "point";
+    $class1 = "point_bold";
+    $exaequo = new Exaequo();
+    foreach ($datas as $data) {
+        $rank = $ranks[$idx % 2];
+        echo "<tr class=\"$rank\">\n";
+        echo "<td class=\"point\">" . $exaequo->proc($data['fun']) . "</td>\n";
+        echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['team'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['season'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['fun'] . "</td>\n";
+        echo "<td class=\"fun\">(" . $data['avg_fun'] . ")</td>\n";
+        echo "<td class=\"$class1\">" . $data['pts'] . "</td>\n";
+        echo "<td class=\"fun\">(" . $data['avg'] . ")</td>\n";
+        echo "<td class=\"point\">" . $data['bonus'] . "</td>\n";
         echo "<td class=\"point\">" . $data['J'] . "</td>\n";
         echo "<td class=\"$class1\">" . $data['G'] . "</td>\n";
         echo "<td class=\"$class1\">" . $data['N'] . "</td>\n";

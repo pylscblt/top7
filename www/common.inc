@@ -7282,7 +7282,7 @@ function get_records_by_team($season)
     $query .= "join `season` on team_player.season=season.Id ";
     $query .= "and team_player.season < $season ";
     $query .= "group by team_player.team_idx order by PTS desc, G desc, ve desc, n14 desc, N desc, diff desc ";
-    #$query .= "limit 3";   
+    $query .= "limit 3";   
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7335,7 +7335,7 @@ function get_records_by_player($season)
     $query .= "join `season` on team_player.season=season.Id ";
     $query .= "and team_player.season < $season ";
     $query .= "order by PTS desc, G desc, ve desc, eq desc, N desc, diff desc ";
-    #$query .= "limit 3";
+    $query .= "limit 3";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7415,7 +7415,7 @@ function get_records_fun($season)
     $query .= "join `season` on team_player.season=season.Id ";
     $query .= "and team_player.season < $season ";
     $query .= "order by fun desc, PTS desc, G desc, ve desc, eq desc, N desc, diff desc ";
-    #$query .= "limit 3";
+    $query .= "limit 3";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7470,7 +7470,7 @@ function get_records_exterieur($season)
     $query .= "and team_player.season < $season ";
     $query .= "and ve <> '' ";
     $query .= "order by ve desc, G desc, N desc, PTS desc ";
-    #$query .= "limit 3";
+    $query .= "limit 3";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7524,7 +7524,7 @@ function get_records_coiffeur($season)
     $query .= "and team_player.season < $season ";
     $query .= "and pc <> '' ";
     $query .= "order by pc desc, bo desc, bd desc, PTS desc ";
-    #$query .= "limit 3";
+    $query .= "limit 3";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7578,7 +7578,7 @@ function get_records_BOff($season)
     $query .= "and team_player.season < $season ";
     $query .= "and bo <> '' ";
     $query .= "order by bo desc, bd desc, PTS desc ";
-    #$query .= "limit 3";
+    $query .= "limit 3";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7633,7 +7633,7 @@ function get_records_14($season)
     $query .= "and team_player.season < $season ";
     #$query .= "and d14 <> '' ";
     $query .= "order by ifnull(d14, 26) asc, eq desc, pts desc ";
-    #$query .= "limit 3";
+    $query .= "limit 3";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7716,8 +7716,8 @@ function put_records_by_team($datas)
     $class1 = "point_bold";
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        #echo "<tr class=\"rank7_$idx\">\n";
-        echo "<tr class=\"$rank\">\n";
+        if ($idx == 1) echo "<tr class=\"records_$idx\">\n";
+        else echo "<tr class=\"$rank\">\n";
         echo "<td class=\"point\">$idx</td>\n";
         echo "<td class=\"point\">" . $data['name'] . "</td>\n";
         echo "<td class=\"point\">" . $data['season'] . "</td>\n";
@@ -7741,7 +7741,6 @@ function put_records_by_team($datas)
 
 function put_stats_by_team($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Equipe PTS (Moy) (fun) Bonus J G N P +/- BO BD Ge 14! Co
     // ------------------------------------------------------------------
@@ -7816,7 +7815,6 @@ function put_stats_by_team($datas)
         echo "<td class=\"point\">" . $data['pc'] . "</td>\n";
         $idx++;
     }
-
     echo "</table>\n";
 }
 
@@ -7874,8 +7872,8 @@ function put_records_by_player($datas)
     $exaequo = new Exaequo();
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        #echo "<tr class=\"rank7_$idx\">\n";
-        echo "<tr class=\"$rank\">\n";
+        if ($idx == 1) echo "<tr class=\"records_$idx\">\n";
+        else echo "<tr class=\"$rank\">\n";
         echo "<td class=\"point\">" . $exaequo->proc($data['pts']) . "</td>\n";
         echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
         echo "<td class=\"point\">" . $data['team'] . "</td>\n";
@@ -7899,7 +7897,6 @@ function put_records_by_player($datas)
 
 function put_stats_by_player($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe PTS (Moy) (fun) Bonus J G N P +/- BO BD Ge Eq Co
     // ------------------------------------------------------------------
@@ -8060,7 +8057,6 @@ function put_stats_average($datas)
 
 function put_records_fun($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Saison Pts Fun (Moy) PTS (Moy) Bonus J G N P +/- BO BD Ge Eq Co
     // ------------------------------------------------------------------
@@ -8120,7 +8116,8 @@ function put_records_fun($datas)
     $exaequo = new Exaequo();
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        echo "<tr class=\"$rank\">\n";
+        if ($idx == 1) echo "<tr class=\"records_$idx\">\n";
+        else echo "<tr class=\"$rank\">\n";
         echo "<td class=\"point\">" . $exaequo->proc($data['fun']) . "</td>\n";
         echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
         echo "<td class=\"point\">" . $data['team'] . "</td>\n";
@@ -8147,7 +8144,6 @@ function put_records_fun($datas)
 
 function put_stats_fun($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Pts Fun (Moy) PTS (Moy) Bonus J G N P +/- BO BD Ge Eq Co
     // ------------------------------------------------------------------
@@ -8232,7 +8228,6 @@ function put_stats_fun($datas)
 
 function put_records_exterieur($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Saison Exterieur J G N P PTS  Bonus +/- BO BD Eq Co
     // -------------------------------------------------------------------------------
@@ -8285,8 +8280,8 @@ function put_records_exterieur($datas)
     $exaequo = new Exaequo();
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        #echo "<tr class=\"rank7_$idx\">\n";
-        echo "<tr class=\"$rank\">\n";
+        if ($idx == 1) echo "<tr class=\"records_$idx\">\n";
+        else echo "<tr class=\"$rank\">\n";
         echo "<td class=\"point\">" . $exaequo->proc($data['ve']) . "</td>\n";
         echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
         echo "<td class=\"point\">" . $data['team'] . "</td>\n";
@@ -8310,7 +8305,6 @@ function put_records_exterieur($datas)
 
 function put_stats_exterieur($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Exterieur J G N P PTS (fun) Bonus +/- BO BD Eq Co
     // ------------------------------------------------------------------
@@ -8389,7 +8383,6 @@ function put_stats_exterieur($datas)
 
 function put_records_coiffeur($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Season Coiffeur BO BD PTS Bonus J G N P +/- Ge Eq
     // -----------------------------------------------------------------------------
@@ -8442,8 +8435,8 @@ function put_records_coiffeur($datas)
     $exaequo = new Exaequo();
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        #echo "<tr class=\"rank7_$idx\">\n";
-        echo "<tr class=\"$rank\">\n";
+        if ($idx == 1) echo "<tr class=\"records_$idx\">\n";
+        else echo "<tr class=\"$rank\">\n";
         echo "<td class=\"point\">" . $exaequo->proc($data['pc']) . "</td>\n";
         echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
         echo "<td class=\"point\">" . $data['team'] . "</td>\n";
@@ -8467,7 +8460,6 @@ function put_records_coiffeur($datas)
 
 function put_stats_coiffeur($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Coiffeur BO BD PTS (fun) Bonus J G N P +/- Ge Eq
     // ------------------------------------------------------------------
@@ -8546,7 +8538,6 @@ function put_stats_coiffeur($datas)
 
 function put_records_BOff($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Saison BO BD PTS Bonus J G N P +/- Ge Eq Co
     // -----------------------------------------------------------------------
@@ -8599,9 +8590,10 @@ function put_records_BOff($datas)
     $exaequo = new Exaequo();
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        #echo "<tr class=\"rank7_$idx\">\n";
-        echo "<tr class=\"$rank\">\n";
-        echo "<td class=\"point\">" . $exaequo->proc($data['bo']) . "</td>\n";
+        if ($idx == 1) echo "<tr class=\"records_$idx\">\n";
+        else echo "<tr class=\"$rank\">\n";
+        #echo "<td class=\"point\">" . $exaequo->proc($data['bo']) . "</td>\n";
+        echo "<td class=\"point\">" . $idx . "</td>\n";
         echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
         echo "<td class=\"point\">" . $data['team'] . "</td>\n";
         echo "<td class=\"point\">" . $data['season'] . "</td>\n";
@@ -8624,7 +8616,6 @@ function put_records_BOff($datas)
 
 function put_stats_BOff($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe BO BD PTS (fun) Bonus J G N P +/- Ge Eq Co
     // ------------------------------------------------------------------
@@ -8703,7 +8694,6 @@ function put_stats_BOff($datas)
 
 function put_records_14($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Saison 14! Eq PTS Bonus J G N P +/- BO BD Ge Co
     // ---------------------------------------------------------------------------
@@ -8759,8 +8749,8 @@ function put_records_14($datas)
     $exaequo = new Exaequo();
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
-        #echo "<tr class=\"rank7_$idx\">\n";
-        echo "<tr class=\"$rank\">\n";
+        if ($idx == 1) echo "<tr class=\"records_$idx\">\n";
+        else echo "<tr class=\"$rank\">\n";
         #echo "<td class=\"point\">" . $exaequo->proc($data['d14']) . "</td>\n";
         echo "<td class=\"point\">" . $idx . "</td>\n";
         if ($data['d14'] < 14) {
@@ -8927,18 +8917,6 @@ function put_stats_info($p)
 
 function put_records_info($p)
 {
-
-    $display = $p['display_stats'];
-    echo "<br>\n";
-    echo "<table class=\"nav\" border=0>\n";
-    echo "<tr><td>\n";
-    echo "<div class=\"info\">\n";
-    echo "<a href=\"javascript:unhide('legend');\">Légendes</a> - ";
-    echo "<a href=\"javascript:unhide('pointsFun');\">Points fun</a>";
-    echo "</div>\n";
-    put_records_legend($display);
-    echo "</td></tr>\n";
-    echo "</table>\n";
 }
 
 class Exaequo

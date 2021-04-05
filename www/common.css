@@ -291,17 +291,26 @@ select, input[type="submit"] {
 }
 
 #StatsButton {
-  	background-color: blue;
-}
-#StatsButton:hover {
   	background-color: #0000CC;
 }
 
+#StatsButton.selected {
+	background-color: blue;
+}
+
+#StatsButton:hover {
+  	background-color: blue;
+}
+
 #RecordsButton {
+	background-color: #cc0000;
+}
+#RecordsButton.selected {
 	background-color: red;
 }
+
 #RecordsButton:hover {
-	background-color: #cc0000;
+	background-color: red;
 }
 
 #Rank7Button {
@@ -746,6 +755,16 @@ tr.forumtitle {
   	background-color: #ff9900;
 }
 
+tr.records_1 {
+	background-color: #FAFAE0;
+	color: red;
+	font-weight: bold;
+}
+
+tr.records_1:hover, tr.hover {
+	background-color: #C2C2C2;
+}
+
 tr.rank7_1 {
 	background-color: #FAFAE0; 
     color: blue;
@@ -755,6 +774,7 @@ tr.rank7_2 {
 	background-color: #FAFAE0; 
     color: blue;
 }
+
 tr.rank7_1:hover, tr.rank7_2:hover, tr.hover {
 	background-color: #C2C2C2; 
 }

@@ -1,6 +1,27 @@
-## Règlement Saison 2015-2016 - Article 331
+# Règlement Saison 2015-2016 - Article 330, 331
 
-### 4) Etablissement du classement lorsque deux ou plusieurs équipes sont à égalité
+
+## 3) Principes de classement, de qualification d’opposition
+
+**Article 330**
+
+### 3.2. Points "terrain" :
+
+#### a) Il est attribué à chaque équipe, à l'issue d'un match de championnat, le nombre de points, dits points "terrain" suivants :
+
+*    4 points pour match gagné,
+*    2 points pour match nul,
+*    0 point pour match perdu,
+*    Moins 2 points pour chaque match perdu par disqualification ou par forfait (ou pour toute autre raison administrative ou disciplinaire), et dans ce cas 5 points pour le club adverse.
+
+#### b) Des points de bonus sont attribués en phase préliminaire du Championnat de France de 1ère et 2ème division selon les principes suivants :
+
+*    1 point de bonus pour une équipe ayant marqué au moins 3 essais de plus que son adversaire lors d’une même rencontre ;
+*    1 point de bonus pour une équipe ayant perdu par un écart de 7 points ou moins ;
+
+Les points de bonus attribués s’ajoutent aux points terrain obtenus par l’équipe concernée.
+
+## 4) Etablissement du classement lorsque deux ou plusieurs équipes sont à égalité
 
 **Article 331**
 

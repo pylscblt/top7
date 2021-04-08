@@ -4840,7 +4840,7 @@ function put_player_link($p)
 
         echo "<td class=\"season_title\" align=\"center\" width=\"10%\">";
         $action = "records";
-        $title  = "RECORDS Inter-SAISONS";
+        $title  = "RECORDS & PALMARES";
         $idbutton = "RecordsButton";
         echo "<form id=\"form_stats\" action=\"$action\" method=\"post\">\n";
         echo "<input type=\"submit\" id=\"$idbutton\" class=\"selected\" value=\"$title\">\n";

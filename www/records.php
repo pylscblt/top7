@@ -16,6 +16,9 @@
 	put_nav_records( $_SESSION);
 	records( $_SESSION);
 	put_records_info( $_SESSION);
+
+	echo "<br><br>\n";
+	readfile(c_palmares_file);
 	echo "</center>\n";
 
 ?>

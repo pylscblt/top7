@@ -78,6 +78,7 @@ define( "c_version",        	"2.0");
 define( "c_copyright",      	"2014");
 define( "c_stats_legend_file",	"stats_legend");
 define( "c_favicons_file",		"favicons.html");
+define( "c_palmares_file",      "palmares.html");
 
 define( "c_time_deadline", 		43200);	//12*3600=43200 sec
 define( "c_time_game_closed", 	345600);//thurday = monday+4*24*3600=345600 sec

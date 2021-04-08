@@ -755,6 +755,27 @@ tr.forumtitle {
   	background-color: #ff9900;
 }
 
+tr.palmares_1 {
+	background-color: #FAFAE0;
+	color: red;
+	font-weight: bold;
+}
+
+tr.palmares_2 {
+	background-color: #D8D8D8; 
+	color: blue;
+	font-weight: bold;
+}
+
+tr.palmares_3 {
+	background-color: #FAFAE0;
+	color: blue;
+}
+
+tr.palmares_1:hover, tr.palmares_2:hover, tr.palmares_3:hover, tr.hover {
+	background-color: #C2C2C2; 
+}
+
 tr.records_1 {
 	background-color: #FAFAE0;
 	color: red;
@@ -793,7 +814,7 @@ tr.rank7_5:hover, tr.rank7_6:hover, tr.hover {
 tr.rank7_7 {
 	background-color: #D8D8D8; 
 	color: blue;
-    	font-weight: bold;
+    font-weight: bold;
 }
 tr.rank7_7:hover, tr.hover {
 	background-color: #C2C2C2; 
@@ -801,7 +822,7 @@ tr.rank7_7:hover, tr.hover {
 tr.rank_1 {
 	background-color: #FAFAE0; 
   	color: darkblue;
-    	font-weight: bold;
+    font-weight: bold;
 }
 tr.rank_2 {
 	background-color: #FAFAE0; 

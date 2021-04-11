@@ -8978,8 +8978,14 @@ function palmares($p)
     }    
     printr_log(__FUNCTION__, 'palmares not sorted', $palmares);
 
-    $count = array_column($palmares, 'count');
-    $pts = array_column($palmares, 'pts');
+    #$count = array_column($palmares, 'count');
+    #$pts = array_column($palmares, 'pts');
+    $count = array();
+    $pts = array();
+    foreach ($palmares as $key => $row) {
+        $count[$key]  = $row['count'];
+        $pts[$key] = $row['pts'];
+    }
     $palmares_sorted = array_multisort($count, SORT_DESC, $pts, SORT_DESC, $palmares);
     printr_log(__FUNCTION__, 'palmares sorted', $palmares);
 

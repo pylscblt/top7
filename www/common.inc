@@ -236,6 +236,7 @@ $f_debugs = array(
     #    "check_game_closed",
     "register.php",
     "recaptcha",
+    "palmares"
 );
 
 function print_version()
@@ -4746,7 +4747,7 @@ function display_info_player($player, $p)
 
     foreach ($palmares as $info) {
         if ($info['rank'] == "") {
-            if ($info['season'] == 5) {
+            if ($info['season'] == c_canceled_season) {
                 $info['rank'] = "Annulée";
             } else {
                 $info['rank'] = "En cours";
@@ -7152,12 +7153,10 @@ function records($p)
         $season = $p['season'];
     }
 
-    $top7_season = get_top7_season_by_id($season);
-
     $title = "RECORDS";
     echo "<table class=\"player\">\n";
     echo "<tr class=\"player\">\n";
-    echo "<th class=\"stats\" colspan=\"3\">$title <font size=2><i>(toutes saisons confondues)</i></font></th>\n";
+    echo "<th class=\"stats\">$title <font size=2><i>(toutes saisons confondues)</i></font></th>\n";
     echo "</tr>\n";
     echo "</table>\n";
 
@@ -7212,7 +7211,7 @@ function stats($p)
 
     echo "<table class=\"player\">\n";
     echo "<tr class=\"player\">\n";
-    echo "<th class=\"stats\" colspan=\"3\">$title <font size=2><i>(toutes équipes confondues)</i></font></th>\n";
+    echo "<th class=\"stats\">$title <font size=2><i>(toutes équipes confondues)</i></font></th>\n";
     echo "</tr>\n";
     echo "</table>\n";
 
@@ -7220,40 +7219,40 @@ function stats($p)
 
     switch ($display) {
         case c_stats_by_team:
-            $datas = get_stats_by_team($season);
-            put_stats_by_team($datas);
+            $data = get_stats_by_team($season);
+            put_stats_by_team($data);
             break;
         case c_stats_by_player:
-            $datas = get_stats_by_player($season);
-            put_stats_by_player($datas);
+            $data = get_stats_by_player($season);
+            put_stats_by_player($data);
             break;
         case c_stats_average:
-            $datas = get_stats_average($season);
-            put_stats_average($datas);
+            $data = get_stats_average($season);
+            put_stats_average($data);
             break;
         case c_stats_fun:
-            $datas = get_stats_fun($season);
-            put_stats_fun($datas);
+            $data = get_stats_fun($season);
+            put_stats_fun($data);
             break;
         case c_stats_exterieur:
-            $datas = get_stats_exterieur($season);
-            put_stats_exterieur($datas);
+            $data = get_stats_exterieur($season);
+            put_stats_exterieur($data);
             break;
         case c_stats_coiffeur:
-            $datas = get_stats_coiffeur($season);
-            put_stats_coiffeur($datas);
+            $data = get_stats_coiffeur($season);
+            put_stats_coiffeur($data);
             break;
         case c_stats_BOff:
-            $datas = get_stats_BOff($season);
-            put_stats_BOff($datas);
+            $data = get_stats_BOff($season);
+            put_stats_BOff($data);
             break;
         case c_stats_14:
-            $datas = get_stats_14($season);
-            put_stats_14($datas);
+            $data = get_stats_14($season);
+            put_stats_14($data);
             break;
         default:
-            $datas = get_stats_by_player($season);
-            put_stats_by_player($datas);
+            $data = get_stats_by_player($season);
+            put_stats_by_player($data);
             break;
     }
 }
@@ -7281,8 +7280,9 @@ function get_records_by_team($season)
     $query .= "join `player` on team_player.team_idx=player.team ";
     $query .= "join `season` on team_player.season=season.Id ";
     $query .= "and team_player.season < $season ";
+    $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "group by team_player.team_idx order by PTS desc, G desc, ve desc, n14 desc, N desc, diff desc ";
-    $query .= "limit 3";   
+    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7334,8 +7334,9 @@ function get_records_by_player($season)
     $query .= "join `player` on team_player.team_idx=player.team ";
     $query .= "join `season` on team_player.season=season.Id ";
     $query .= "and team_player.season < $season ";
+    $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "order by PTS desc, G desc, ve desc, eq desc, N desc, diff desc ";
-    $query .= "limit 3";
+    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7414,8 +7415,9 @@ function get_records_fun($season)
     $query .= "join `player` on team_player.team_idx=player.team ";
     $query .= "join `season` on team_player.season=season.Id ";
     $query .= "and team_player.season < $season ";
+    $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "order by fun desc, PTS desc, G desc, ve desc, eq desc, N desc, diff desc ";
-    $query .= "limit 3";
+    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7468,9 +7470,10 @@ function get_records_exterieur($season)
     $query .= "join `player` on team_player.team_idx=player.team ";
     $query .= "join `season` on team_player.season=season.Id ";
     $query .= "and team_player.season < $season ";
+    $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "and ve <> '' ";
     $query .= "order by ve desc, G desc, N desc, PTS desc ";
-    $query .= "limit 3";
+    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7522,9 +7525,10 @@ function get_records_coiffeur($season)
     $query .= "join `player` on team_player.team_idx=player.team ";
     $query .= "join `season` on team_player.season=season.Id ";
     $query .= "and team_player.season < $season ";
+    $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "and pc <> '' ";
     $query .= "order by pc desc, bo desc, bd desc, PTS desc ";
-    $query .= "limit 3";
+    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7576,9 +7580,10 @@ function get_records_BOff($season)
     $query .= "join `player` on team_player.team_idx=player.team ";
     $query .= "join `season` on team_player.season=season.Id ";
     $query .= "and team_player.season < $season ";
+    $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "and bo <> '' ";
     $query .= "order by bo desc, bd desc, PTS desc ";
-    $query .= "limit 3";
+    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7631,9 +7636,10 @@ function get_records_14($season)
     $query .= "join `player` on team_player.team_idx=player.team ";
     $query .= "join `season` on team_player.season=season.Id ";
     $query .= "and team_player.season < $season ";
+    $query .= "and team_player.season <> " . c_canceled_season . " ";
     #$query .= "and d14 <> '' ";
     $query .= "order by ifnull(d14, 26) asc, eq desc, pts desc ";
-    $query .= "limit 3";
+    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -8907,8 +8913,108 @@ function put_stats_info($p)
     echo "</table>\n";
 }
 
-function put_records_info($p)
+function get_palmares($season)
 {
+    $query = "select ";
+    $query .= "pseudo, ";
+    $query .= "team_player.name as team, ";
+    $query .= "season.title as season, ";
+    $query .= "point as pts ";
+    $query .= "from `team_player` ";
+    $query .= "join `player` on team_player.team_idx=player.team ";
+    $query .= "join `season` on team_player.season=season.Id ";
+    $query .= "and team_player.season < $season ";
+    $query .= "and team_player.season <> " . c_canceled_season . " ";
+    $query .= "and player.rankFinal = 1 ";
+    $query .= "group by team_player.team_idx ";
+    $query .= "order by season.Id";
+    return pdo_fetch(__FUNCTION__, c_all, $query);
+}
+
+function palmares_star_icon($count) {
+    $stars = "";
+    for ($i=0; $i<$count; $i++) {
+        $stars .= "<img src=\"star.png\">";
+    }
+    return $stars;
+}
+
+function palmares($p)
+{
+    $season  = 0;
+    if (isset($p['season'])) {
+        $season = $p['season'];
+    }
+
+    $title = "PALMARES DES CHAMPIONS";
+    echo "<table id=\"palmares\" class=\"nav_stats\">\n";
+    echo "<tr class=\"player\">\n";
+    echo "<th class=\"palmares\">$title</th>\n";
+    echo "</tr>\n";
+    echo "</table>\n";
+
+    $data = get_palmares($season);
+    printr_log(__FUNCTION__, 'data', $data);
+
+    $palmares_not_sorted = array();
+    foreach( $data as $item) {
+        $pseudo = trim($item['pseudo'], " ★☆");
+        if( array_key_exists( $pseudo, $palmares_not_sorted)) {
+            $count = $palmares_not_sorted[$pseudo]["count"] += 1;
+            $year = $palmares_not_sorted[$pseudo]["season"] . "," . substr($item["season"], -4);
+            $pts = $palmares_not_sorted[$pseudo]["pts"];
+            if( $item["pts"] > $pts) $pts =  $item["pts"];
+        } else {
+            $year = substr($item['season'], -4);
+            $count = 1;
+            $pts = $item["pts"];
+        }
+        $palmares_not_sorted[$pseudo] = array("count" => $count, "team" => $item["team"], "season" => $year, "pts" => $pts);
+    }
+
+    $palmares = array();
+    foreach ($palmares_not_sorted as $pseudo => $data) {
+        $palmares[] = array_merge(array( "pseudo" => $pseudo), $data);
+    }    
+    printr_log(__FUNCTION__, 'palmares not sorted', $palmares);
+
+    $count = array_column($palmares, 'count');
+    $pts = array_column($palmares, 'pts');
+    $palmares_sorted = array_multisort($count, SORT_DESC, $pts, SORT_DESC, $palmares);
+    printr_log(__FUNCTION__, 'palmares sorted', $palmares);
+
+    echo "<table id=\"palmares\" class=\"day\" border=0>\n";
+    // Line 1 :   #  Joueur Equipe Titres Saison Points 
+    // -------------------------------------------------
+    $class = "stats";
+    echo "<tr>\n";
+    echo "<th class=\"$class\">#</th>\n";
+    echo "<th class=\"$class\">Joueur</th>\n";
+    echo "<th class=\"$class\">Equipe</th>\n";
+    echo "<th class=\"$class\">Titres</th>\n";
+    echo "<th class=\"$class\">Saison</th>\n";
+    echo "<th class=\"$class\">Points</th>\n";
+    echo "</tr>\n";
+
+
+    $idx    = 1;
+    $ranks  = array("odd", "even");
+    $exaequo = new Exaequo();
+    foreach ($palmares as $data) {
+        $rank = $ranks[$idx % 2];
+        if ($idx == 1) echo "<tr class=\"palmares_$idx\">\n";
+        else echo "<tr class=\"$rank\">\n";
+        #echo "<td class=\"point\">$idx</td>\n";
+        echo "<td class=\"point\">" . $exaequo->proc($data['pts']) . "</td>\n";
+        echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['team'] . "</td>\n";
+        $stars = palmares_star_icon($data['count']);
+        echo "<td class=\"point\">" . $stars . "</td>\n";
+        echo "<td class=\"point\">" . $data['season'] . "</td>\n";
+        echo "<td class=\"point\">" . $data['pts'] . "</td>\n";
+        $idx++;
+    }
+    echo "</table>\n";
 }
 
 class Exaequo

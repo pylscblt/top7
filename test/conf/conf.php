@@ -36,6 +36,8 @@ define( "c_url_github", 	"https://github.com/pylscblt/top7");
 define( "c_url_lnr_match",  "http://www.lnr.fr/rugby-top-14/matchs/");
 define( "c_url_lnr_req",    "http://www.lnr.fr/fdmi?nid=");
 
+define( "c_records_limit", 3);
+define( "c_canceled_season", 5); # season 2019-2020
 
 define( "c_min_password", 	6);
 define( "c_max_password", 	30);

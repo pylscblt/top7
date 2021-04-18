@@ -24,6 +24,8 @@ define("c_admin_password", "admin");
  
 define( "c_recaptcha_public_key", "");
 define( "c_recaptcha_secret_key", "");
+
+define("c_recaptcha_score", 0.8);
 define("c_google_gtag", "google_gtag.html");
 
 define( "c_logo_file", 	"logo.png");

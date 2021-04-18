@@ -101,11 +101,11 @@ div.registerbox2 {
 	bottom: 0;
 	left: 0;
 	right: 0;
-    	width: 650px;
-    	height: 200px;
-    	background-color: #6E6767;
-        text-align: center;
-    	opacity: 0.90;
+    width: 650px;
+    height: 200px;
+    background-color: #6E6767;
+    text-align: center;
+    opacity: 0.90;
 	-webkit-border-radius: 3;
   	-moz-border-radius: 3;
   	border-radius: 3px;
@@ -138,7 +138,7 @@ div.passwordbox2 {
    	width: 470px;
    	height: 430px;
    	background-color: #6E6767;
-    	text-align: center;
+    text-align: center;
    	opacity: 0.90;
 	-webkit-border-radius: 3;
   	-moz-border-radius: 3;
@@ -155,7 +155,7 @@ div.messagebox1 {
    	width: 470px;
 /*   	height: 450px; */
    	background-color: #6E6767;
-    	text-align: center;
+    text-align: center;
    	opacity: 0.90;
 	-webkit-border-radius: 3;
   	-moz-border-radius: 3;
@@ -291,10 +291,26 @@ select, input[type="submit"] {
 }
 
 #StatsButton {
+  	background-color: #0000CC;
+}
+
+#StatsButton.selected {
+	background-color: blue;
+}
+
+#StatsButton:hover {
   	background-color: blue;
 }
-#StatsButton:hover {
-  	background-color: #0000CC;
+
+#RecordsButton {
+	background-color: #cc0000;
+}
+#RecordsButton.selected {
+	background-color: red;
+}
+
+#RecordsButton:hover {
+	background-color: red;
 }
 
 #Rank7Button {
@@ -445,13 +461,13 @@ tr.odd:hover, tr.even:hover, tr.hover {
 }
 
 table.login {
-    	margin-left: auto;
-    	margin-right: auto;
+    margin-left: auto;
+    margin-right: auto;
 	font-family: Verdana, sans-serif;
 	font-size: 12px;
 	color: white;
 	min-width: 400px;
-    	padding: 10px;
+    padding: 10px;
 	color: white;
 }
 
@@ -666,16 +682,16 @@ table.nav, table.status {
 	font-family: Verdana, sans-serif;
 	font-size: small;
    	border-collapse: collapse;
-    	background-color: #FAFAE0;
-    	width: 90%;
+    background-color: #FAFAE0;
+    width: 90%;
 }
 
 table.nav_stats {
 	font-family: Verdana, sans-serif;
 	font-size: small;
    	border-collapse: collapse;
-    	background-color: #FAFAE0;
-    	width: 90%;
+    background-color: #FAFAE0;
+    width: 90%;
 }
 
 table.forum {
@@ -739,6 +755,38 @@ tr.forumtitle {
   	background-color: #ff9900;
 }
 
+#palmares {
+   	min-width: 50%;
+	width: auto;
+}
+
+th.palmares {
+	background-color: #5b5d9f;
+    color: white;
+	font-size: 200%;
+}
+
+tr.palmares_1 {
+	background-color: #FAFAE0;
+	color: red;
+	font-weight: bold;
+	font-size: large;
+}
+
+tr.palmares_1:hover, tr.hover {
+	background-color: #C2C2C2; 
+}
+
+tr.records_1 {
+	background-color: #FAFAE0;
+	color: red;
+	font-weight: bold;
+}
+
+tr.records_1:hover, tr.hover {
+	background-color: #C2C2C2;
+}
+
 tr.rank7_1 {
 	background-color: #FAFAE0; 
     color: blue;
@@ -748,11 +796,12 @@ tr.rank7_2 {
 	background-color: #FAFAE0; 
     color: blue;
 }
+
 tr.rank7_1:hover, tr.rank7_2:hover, tr.hover {
 	background-color: #C2C2C2; 
 }
 tr.rank7_3, tr.rank7_4 {
-    /background-color: #D8D8D8; 
+    background-color: #D8D8D8; 
 }
 tr.rank7_3:hover, tr.rank7_4:hover, tr.hover {
 	background-color: #C2C2C2; 
@@ -766,7 +815,7 @@ tr.rank7_5:hover, tr.rank7_6:hover, tr.hover {
 tr.rank7_7 {
 	background-color: #D8D8D8; 
 	color: blue;
-    	font-weight: bold;
+    font-weight: bold;
 }
 tr.rank7_7:hover, tr.hover {
 	background-color: #C2C2C2; 
@@ -774,7 +823,7 @@ tr.rank7_7:hover, tr.hover {
 tr.rank_1 {
 	background-color: #FAFAE0; 
   	color: darkblue;
-    	font-weight: bold;
+    font-weight: bold;
 }
 tr.rank_2 {
 	background-color: #FAFAE0; 

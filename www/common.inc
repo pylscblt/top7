@@ -7282,7 +7282,6 @@ function get_records_by_team($season)
     $query .= "and team_player.season < $season ";
     $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "group by team_player.team_idx order by PTS desc, G desc, ve desc, n14 desc, N desc, diff desc ";
-    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7336,7 +7335,6 @@ function get_records_by_player($season)
     $query .= "and team_player.season < $season ";
     $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "order by PTS desc, G desc, ve desc, eq desc, N desc, diff desc ";
-    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7417,7 +7415,6 @@ function get_records_fun($season)
     $query .= "and team_player.season < $season ";
     $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "order by fun desc, PTS desc, G desc, ve desc, eq desc, N desc, diff desc ";
-    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7473,7 +7470,6 @@ function get_records_exterieur($season)
     $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "and ve <> '' ";
     $query .= "order by ve desc, G desc, N desc, PTS desc ";
-    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7528,7 +7524,6 @@ function get_records_coiffeur($season)
     $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "and pc <> '' ";
     $query .= "order by pc desc, bo desc, bd desc, PTS desc ";
-    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7583,7 +7578,6 @@ function get_records_BOff($season)
     $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "and bo <> '' ";
     $query .= "order by bo desc, bd desc, PTS desc ";
-    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7639,7 +7633,6 @@ function get_records_14($season)
     $query .= "and team_player.season <> " . c_canceled_season . " ";
     #$query .= "and d14 <> '' ";
     $query .= "order by ifnull(d14, 26) asc, eq desc, pts desc ";
-    $query .= "limit " . c_records_limit;
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -7669,8 +7662,23 @@ function get_stats_14($season)
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
+function remove_duplicate_name($datas, $name)
+{
+    $keys = array();
+    $filtered_datas = array();
+    foreach($datas as $rank) {
+        $key = $rank[$name];
+        if(!in_array($key, $keys)) {
+            $filtered_datas[] = $rank;
+            $keys[] = $key;
+        }
+    }
+    return $filtered_datas;
+}
+
 function put_records_by_team($datas)
 {
+    if( c_records_remove_duplicate) $datas = remove_duplicate_name($datas, 'name');
 
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Equipe Saison PTS Bonus J G N P +/- BO BD Ge 14! Co
@@ -7740,8 +7748,8 @@ function put_records_by_team($datas)
         echo "<td class=\"$class1\">" . $data['n14'] . "</td>\n";
         echo "<td class=\"point\">" . $data['pc'] . "</td>\n";
         $idx++;
+        if($idx > c_records_limit) break;
     }
-
     echo "</table>\n";
 }
 
@@ -7826,6 +7834,8 @@ function put_stats_by_team($datas)
 
 function put_records_by_player($datas)
 {
+    if( c_records_remove_duplicate) $datas = remove_duplicate_name($datas, 'pseudo');
+
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Saison PTS Bonus J G N P +/- BO BD Ge Eq Co
     // -----------------------------------------------------------------------
@@ -7897,6 +7907,7 @@ function put_records_by_player($datas)
         echo "<td class=\"$class1\">" . $data['eq'] . "</td>\n";
         echo "<td class=\"point\">" . $data['pc'] . "</td>\n";
         $idx++;
+        if($idx > c_records_limit) break;
     }
     echo "</table>\n";
 }
@@ -8063,6 +8074,8 @@ function put_stats_average($datas)
 
 function put_records_fun($datas)
 {
+    if( c_records_remove_duplicate) $datas = remove_duplicate_name($datas, 'pseudo');
+
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Saison Pts Fun PTS Bonus J G N P +/- BO BD Ge Eq Co
     // ------------------------------------------------------------------
@@ -8136,6 +8149,7 @@ function put_records_fun($datas)
         echo "<td class=\"$class1\">" . $data['eq'] . "</td>\n";
         echo "<td class=\"point\">" . $data['pc'] . "</td>\n";
         $idx++;
+        if($idx > c_records_limit) break;
     }
     echo "</table>\n";
 }
@@ -8226,6 +8240,8 @@ function put_stats_fun($datas)
 
 function put_records_exterieur($datas)
 {
+    if( c_records_remove_duplicate) $datas = remove_duplicate_name($datas, 'pseudo');
+
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Saison Exterieur J G N P PTS  Bonus +/- BO BD Eq Co
     // -------------------------------------------------------------------------------
@@ -8297,6 +8313,7 @@ function put_records_exterieur($datas)
         echo "<td class=\"point\">" . $data['eq'] . "</td>\n";
         echo "<td class=\"point\">" . $data['pc'] . "</td>\n";
         $idx++;
+        if($idx > c_records_limit) break;
     }
     echo "</table>\n";
 }
@@ -8381,6 +8398,8 @@ function put_stats_exterieur($datas)
 
 function put_records_coiffeur($datas)
 {
+    if( c_records_remove_duplicate) $datas = remove_duplicate_name($datas, 'pseudo');
+
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Season Coiffeur BO BD PTS Bonus J G N P +/- Ge Eq
     // -----------------------------------------------------------------------------
@@ -8452,6 +8471,7 @@ function put_records_coiffeur($datas)
         echo "<td class=\"point\">" . $data['ve'] . "</td>\n";
         echo "<td class=\"point\">" . $data['eq'] . "</td>\n";
         $idx++;
+        if($idx > c_records_limit) break;
     }
     echo "</table>\n";
 }
@@ -8536,6 +8556,8 @@ function put_stats_coiffeur($datas)
 
 function put_records_BOff($datas)
 {
+    if( c_records_remove_duplicate) $datas = remove_duplicate_name($datas, 'pseudo');
+
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Saison BO BD PTS Bonus J G N P +/- Ge Eq Co
     // -----------------------------------------------------------------------
@@ -8608,6 +8630,7 @@ function put_records_BOff($datas)
         echo "<td class=\"point\">" . $data['eq'] . "</td>\n";
         echo "<td class=\"point\">" . $data['pc'] . "</td>\n";
         $idx++;
+        if($idx > c_records_limit) break;
     }
     echo "</table>\n";
 }
@@ -8692,6 +8715,8 @@ function put_stats_BOff($datas)
 
 function put_records_14($datas)
 {
+    if( c_records_remove_duplicate) $datas = remove_duplicate_name($datas, 'pseudo');
+
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe Saison 14! Eq PTS Bonus J G N P +/- BO BD Ge Co
     // ---------------------------------------------------------------------------
@@ -8777,15 +8802,14 @@ function put_records_14($datas)
         if ($data['d14'] < 14) {
             echo "</i>";
         }
-
         $idx++;
+        if($idx > c_records_limit) break;
     }
     echo "</table>\n";
 }
 
 function put_stats_14($datas)
 {
-
     echo "<table class=\"day\" border=0>\n";
     // Line 1 :   #  Joueur Equipe 14! Eq PTS (fun) Bonus J G N P +/- BO BD Ge Co
     // ------------------------------------------------------------------
@@ -8871,7 +8895,6 @@ function put_stats_14($datas)
         if ($data['d14'] < 14) {
             echo "</i>";
         }
-
         $idx++;
     }
     echo "</table>\n";

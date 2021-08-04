@@ -13,11 +13,11 @@
 
 		$errors = array();
 		$min = c_min_pseudo; $max = c_max_pseudo;
-		if( strlen( $pseudo) < $min) 	$errors[] = "Le pseudo doit avoir au minimum $min caractères";
-		if( strlen( $pseudo) > $max) 	$errors[] = "Le pseudo doit avoir au maximum $max caractères";
+		if( strlen( $pseudo) < $min) 	$errors[] = "Le pseudo doit avoir au minimum $min caractï¿½res";
+		if( strlen( $pseudo) > $max) 	$errors[] = "Le pseudo doit avoir au maximum $max caractï¿½res";
 
         if( check_new_pseudo( $pseudo)) {
-                $errors[] = "Le pseudo <span class=\"warning\">$pseudo</span> est déjà pris."; 
+                $errors[] = "Le pseudo <span class=\"warning\">$pseudo</span> est dï¿½jï¿½ pris."; 
         }
 
 	if( count( $errors)) {
@@ -39,7 +39,7 @@
 		init_admin_sql();
 		$errors = array();
         	if( check_syntax_email( $email)) {
-        		if( check_new_email( $email)) $errors[] = "L'adresse email est déjà prise !";
+        		if( check_new_email( $email)) $errors[] = "L'adresse email est dï¿½jï¿½ prise !";
         	}
         	else $errors[] = "L'adresse email est invalide";
 
@@ -107,6 +107,7 @@
 
 
 	$info = get_player( $player);
+
 	$_SESSION['player']  	= $info['player_idx'];
 	$_SESSION['top7team'] 	= $info['team'];
 	$_SESSION['pseudo'] 	= $info['pseudo'];

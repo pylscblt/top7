@@ -29,7 +29,7 @@
 
 				session_start();
 				init_time_session();
-				$_SESSION['login'] 	= $player['email'];
+				$_SESSION['login'] 	    = $player['email'];
 				$_SESSION['pseudo'] 	= $player['pseudo'];
 				$_SESSION['player'] 	= $player['player'];
 				$_SESSION['captain'] 	= $player['captain'];
@@ -38,8 +38,20 @@
 				$_SESSION['mode'] 		= c_guest;
 				$_SESSION['game']       = c_disable;
 				$_SESSION['register_new_season'] = 0;
+				$_SESSION['top7team_to_register'] = $player['team'];
+				$top7_season = get_top7_season();
+				$_SESSION['season'] = $top7_season['Id'];
+				if( $player['season'] != $top7_season['Id']) { # player is not registered for current season
+					$_SESSION['top7team'] = 0;
+					if( $player['captain']) $_SESSION['register_new_season'] = true; # captain can register same team
+					else $_SESSION['register_new_season'] = false;
+					$_SESSION['top7team_to_register'] = $player['team'];
+					$status = array("team" => c_team_disable, "player" => c_player_disable);
+				} else {
+					$_SESSION['register_new_season'] = false; 
+					$status = check_status_player( $_SESSION);
+				}
 
-				$status = check_status_player( $_SESSION);
 				if( $status['team'] == c_team_waiting) {
 					$_SESSION['game']   = c_not_opened;
 					header( 'location: team');
@@ -47,8 +59,7 @@
 				else {
 
 					if( $status['team'] == c_team_enable and $status['player'] == c_player_enable) $game = check_date_player( $_SESSION);
-
-					if( $player['captain'] and $player['season']<$_SESSION['top7_season']) $_SESSION['register_new_season'] = 1;
+					else $game = c_not_opened;
 
 					$_SESSION['game'] = $game;
 

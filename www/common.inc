@@ -113,6 +113,7 @@ define("c_phase_reguliere", 1);
 define("c_phase_finale", 2);
 
 $opponent_player = array(
+#    c_barrage_day     => array(0 => 1, 1 => 0, 2 => 5, 3 => 4, 4 => 3, 5 => 2),
     c_barrage_day     => array(0 => 1, 1 => 0, 2 => 5, 3 => 4, 4 => 3, 5 => 2),
     c_demifinales_day => array(0 => 3, 1 => 2, 2 => 1, 3 => 0),
     c_finale_day      => array(0 => 1, 1 => 0),
@@ -191,9 +192,9 @@ $f_debugs = array(
     "player.php",
     #    "check_session",
     "key_is_valid",
-    #    "init_time_session",
+    "init_time_session",
     #    "init_password_pending",
-    #    "put_player_link",
+    "put_player_link",
     "put_status",
     "check_player", // don't remove
     "check_status_player",
@@ -205,6 +206,7 @@ $f_debugs = array(
     #    "get_time_game_closed",
     #    "get_last_day_from_date",
     #    "get_last_day_season",
+    "get_first_day_season",
     #    "get_monday_from_day",
     "get_matchs_by_rank",
     #    "get_rss",
@@ -219,7 +221,7 @@ $f_debugs = array(
     #    "get_nb_different_team",
     #    "get_last_day",
     "get_player_from_email",
-    #    "display",
+    "display",
     #    "display_final",
     #    "display_update_match",
     #    "update_match",
@@ -235,9 +237,11 @@ $f_debugs = array(
     "update_register",
     #    "check_game_closed",
     "register.php",
+    "register_new_season.php",
     "recaptcha",
-    "palmares"
-);
+    "palmares",
+    "stats",
+    "register_same_top7team");
 
 function print_version()
 {
@@ -823,10 +827,9 @@ function get_top7_teams($season)
     return $teams;
 }
 
-function insert_new_team($name)
+function insert_new_team($name, $status=c_team_waiting)
 {
 
-    $status      = c_team_waiting;
     $top7_season = get_top7_season();
     $season      = $top7_season['Id'];
     $query       = "insert into team_player(name, status,season) value (:name, :status, :season)";
@@ -1349,6 +1352,8 @@ function display($p)
 {
     $f = "display";
 
+    printr_log(__FUNCTION__, "display(p)", $p);
+
     $day = 0;
     if (isset($p['day'])) {
         $day = $p['day'];
@@ -1429,18 +1434,24 @@ function display($p)
 
     $matchs = get_matchs_by_date($day, $season);
 
+
     if ($display == c_top7) {
         $pronos        = get_pronos($day, $top7team);
         $score_players = get_score_players($day, $season, $top7team);
         if ($day > c_last_day) {
             $barrage_players = get_top7_day_selection($day, $p);
+            printr_log(__FUNCTION__, "barrage_players", $barrage_players);
             $matchs          = get_matchs_by_rank($day, $season);
+            $reverses = array_reverse($matchs);
+            $matchs = $reverses;
         }
     }
 
     if ($display == c_top7_player) {
         if ($day > c_last_day) {
             $matchs          = get_matchs_by_rank($day, $season);
+            $reverses = array_reverse($matchs);
+            $matchs = $reverses;
             $barrage_players = get_top7_day_selection($day, $p);
             $score_players   = get_score_players($day, $season, $top7team);
             if ($status != c_can_play) {
@@ -4052,6 +4063,9 @@ function get_first_day_season($season)
     $query .= "where season=$season and day >= $day limit 1";
     $season = pdo_fetch(__FUNCTION__, c_one, $query);
     $date   = $season['date'] . " 23:00:00";
+    print_log(__FUNCTION__, "date", $date);
+    print_log(__FUNCTION__,"d", strtotime($date));
+    print_log(__FUNCTION__,"d", strtotime($date) - 7 * 24 * 3600);
     return strtotime($date) - 7 * 24 * 3600;
 }
 
@@ -4364,7 +4378,7 @@ function register_message($errors)
     print_message($message, c_previous);
 }
 
-function put_register_form($team, $pseudos, $emails, $errors)
+function put_register_form($team, $pseudos, $emails, $errors, $action="register")
 {
 
     #echo "<div class=\"registerbox\">\n";
@@ -4374,7 +4388,13 @@ function put_register_form($team, $pseudos, $emails, $errors)
 
     echo "<table class=\"login\" border=0>\n";
 
-    $action = "register";
+
+    if( $action == "register") {  # to register a new top7team
+        $readonly = ""; 
+    } else {  # to register top7team from previous season
+        $readonly="readonly";
+    }
+    
 
 
     if (count($errors) == 0) {
@@ -4441,10 +4461,10 @@ function put_register_form($team, $pseudos, $emails, $errors)
         echo "Joueur $j ";
         echo "</td>\n";
         echo "<td>";
-        echo "<input class=\"$class1\" type=\"text\" size=\"$size1\" name=\"pseudos[]\" placeholder=\"$info1\" value=\"$pseudo\">";
+        echo "<input class=\"$class1\" $readonly type=\"text\" size=\"$size1\" name=\"pseudos[]\" placeholder=\"$info1\" value=\"$pseudo\">";
         echo "</td>\n";
         echo "<td>";
-        echo "<input class=\"$class2\" type=\"text\" size=\"$size2\" name=\"emails[]\" placeholder=\"$info2\" value=\"$email\">";
+        echo "<input class=\"$class2\" $readonly type=\"text\" size=\"$size2\" name=\"emails[]\" placeholder=\"$info2\" value=\"$email\">";
         echo "</td>\n";
         echo "</tr>\n";
     }
@@ -4566,7 +4586,7 @@ function put_login_form($token)
 {
 
     init_sql();
-    setlocale(LC_TIME, "fr_FR");
+    setlocale(LC_TIME, "fr_FR.utf8");
 
     echo "<div class=\"loginbox1\">\n";
 
@@ -4601,11 +4621,13 @@ function put_login_form($token)
     echo "</tr>\n";
     echo "<tr>\n";
     echo "<td align=\"center\">";
+    $display_register_link = false;
     if ($now >= $season_start and $now < $stop_register) {
-        if ($now < $start_register) {
+        if ($now < ($start_register - 3600*24)) {
             echo "<div class=\"season\">Crée ton équipe dès le " . strftime("%d %B", $start_register) . " !</div>";
         } else {
             echo "<div class=\"season\">Crée ton équipe maintenant !</div>";
+            $display_register_link = true;
         }
     }
     echo "</td>\n";
@@ -4656,7 +4678,7 @@ function put_login_form($token)
 
     echo "<tr>\n";
     echo "<td>";
-    if ($now >= $season_start and $now < $stop_register) {
+    if ($display_register_link) {
         echo c_msg_home_legend2 . "\n";
         $legend = c_msg_home_legend3;
         echo "<a class=\"login\" href=\"register\">$legend</a>\n";
@@ -4801,9 +4823,13 @@ function put_player_link($p)
     $pseudo              = $p['pseudo'];
     $captain             = $p['captain'];
     $register_new_season = $p['register_new_season'];
-    #$register_new_season     = true;
-    if ($register_new_season) {
-        $top7_season = get_top7_season_by_id($p['top7_season']);
+
+    printr_log(__FUNCTION__, "p", $p);
+    printr_log(__FUNCTION__, "get_top7_season()", get_top7_season());
+    
+
+    if( $register_new_season) {
+        $top7_season = get_top7_season();
         $new_season  = strtolower($top7_season['title']);
     }
 
@@ -5638,6 +5664,7 @@ function get_all_players($season)
 function check_status_player($p)
 {
 
+    printr_log(__FUNCTION__, "p", $p);
     $player           = $p['player'];
     $info_player      = get_info_player($player);
     $info_team        = get_info_team($info_player['team']);
@@ -5668,7 +5695,8 @@ function get_top7_day_selection($day, $p)
     if ($day == c_demifinales_day) {
         $ranks1 = get_rank7(c_last_day, $top7team);
         $ranks2 = get_rank7_one_day(c_barrage_day, $top7team);
-        $ranks  = array($ranks1[0], $ranks1[1], $ranks2[1], $ranks2[0]);
+#        $ranks  = array($ranks1[0], $ranks1[1], $ranks2[1], $ranks2[0]);
+        $ranks  = array($ranks1[0], $ranks1[1], $ranks2[0], $ranks2[1]);
         printr_log(__FUNCTION__, "ranks1 day=28", $ranks1);
         printr_log(__FUNCTION__, "ranks2 day=28", $ranks2);
         printr_log(__FUNCTION__, "ranks day=28", $ranks);
@@ -5812,22 +5840,38 @@ function init_time_session()
     date_default_timezone_set('Europe/Paris');
 
     $top7_season = get_top7_season();
+    print_log(__FUNCTION__, "top7_season", $top7_season);
+
     if (isset($_SESSION['season'])) {
         $season = $_SESSION['season'];
     } else {
         $season             = $top7_season['Id'];
         $_SESSION['season'] = $season;
     }
+    $season_start       = strtotime($top7_season['start']);
+
+
+    print_log(__FUNCTION__, "season", $season);
 
     $now = now();
+
     $day = get_last_day_from_date($now, $season);
     #    $day=13;
+    
     $today              = get_day_from_date($now);
     $monday             = get_monday_from_day($day, $today, $season);
     $time_game_closed   = $monday + c_time_game_closed - 10;
     $time_game_closed   = get_time_game_closed($day, $today, $season, $monday); // ticket 1+22
     $time_season_closed = get_last_day_season($season);
     $time_season_opened = get_first_day_season($season);
+    
+    print_log(__FUNCTION__, "now", $now);
+    print_log(__FUNCTION__, "season", $season);
+    print_log(__FUNCTION__, "time_season_opened", $time_season_opened);
+    if ($now < $time_season_opened) $day = 0;
+
+    if ($now < $season_start) $_SESSION['last_season'] = $season;
+    else $_SESSION['last_season'] = $season - 1;
 
     if ($day > c_last_day) {
         $deadline1 = $monday + 3 * 24 * 3600 - 60;
@@ -6091,6 +6135,7 @@ function check_player($p)
     } else {
         $player = false;
     }
+
 
     printr_log(__FUNCTION__, "password", $p['password']);
     printr_log(__FUNCTION__, "md5.password", md5($p['password']));
@@ -6653,6 +6698,30 @@ function insert_new_player($pseudo, $email, $team, $captain)
     return pdo_insert(__FUNCTION__, $query, $data);
 }
 
+function insert_same_player($pseudo, $password, $email, $team, $captain)
+{
+
+    $top7_season = get_top7_season();
+    $season      = $top7_season['Id'];
+
+    $status   = c_player_enable;
+    $format   = "%Y-%m-%d %H:%M:%S";
+    $date_reg = strftime($format, now());
+    $query  = "insert into player (season, pseudo, password, email, status, team, captain, date_reg) ";
+    $query .= "value (:season, :pseudo, :password, :email, :status, :team,  :captain, :date_reg)";
+    $data = array(
+        "season"    => $season,
+        "pseudo"    => $pseudo,
+        "password"  => $password,
+        "email"     => $email,
+        "status"    => $status,
+        "team"      => $team,
+        "captain"   => $captain,
+        "date_reg"  => $date_reg
+    );
+    return pdo_insert(__FUNCTION__, $query, $data);
+}
+
 function put_line_button($element)
 {
 
@@ -7199,10 +7268,11 @@ function records($p)
 function stats($p)
 {
 
+    printr_log(__FUNCTION__, "p", $p);
     $display = $p['display_stats'];
     $season  = 0;
-    if (isset($p['season'])) {
-        $season = $p['season'];
+    if (isset($p['last_season'])) {
+        $season = $p['last_season'];
     }
 
     $top7_season = get_top7_season_by_id($season);
@@ -9065,4 +9135,18 @@ class Exaequo
         if ($print) return $this->idx;
         else return "";
     }
+}
+
+function register_same_top7team($p, $team_name) 
+{
+    $team = $p['top7team_to_register'];
+    $players = get_top7team_players($team);
+    printr_log(__FUNCTION__, "players", $players);
+
+    $team_idx = insert_new_team($team_name, c_team_enable);
+
+    foreach($players as $player) {
+        insert_same_player($player['pseudo'], $player['password'], $player['email'], $team_idx, $player['captain']);   
+    }
+    return $team_idx;
 }

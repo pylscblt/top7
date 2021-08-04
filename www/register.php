@@ -8,6 +8,9 @@ include("common.inc");
 #echo "<pre>"; print_r( $pseudos); echo "</pre>";
 init_sql();
 printr_log("register.php", "_POST", $_POST);
+printr_log("register.php", "_SESSION", $_SESSION);
+
+
 
 $pseudos = array();
 if (isset($_POST['pseudos'])) {
@@ -115,7 +118,7 @@ if (count($pseudos) and count($emails) and $team) {
 
     if (count($errors)) {
         print_header_register();
-        put_register_form($team, $pseudos, $emails, $errors);
+        put_register_form($team, $pseudos, $emails, $errors, basename(__FILE__, '.php'));
     //register_message( $errors);
     } else {
         if ($captcha) {
@@ -125,7 +128,7 @@ if (count($pseudos) and count($emails) and $team) {
                 foreach ($pseudos as $k => $pseudo) {
                     $captain = false;
                     if ($k == 0) {
-                        $team_idx = insert_new_team($team);
+                        $team_idx = insert_new_team($team, c_team_waiting);
                         $captain = true;
                         $captain_pseudo = $pseudo;
                     }
@@ -156,7 +159,7 @@ if (count($pseudos) and count($emails) and $team) {
 } else {
     print_header_register();
     // register( $_SERVER['PHP_SELF']);
-    put_register_form($team, $pseudos, $emails, $errors);
+    put_register_form($team, $pseudos, $emails, $errors, basename(__FILE__, '.php'));
 }
 ?>
 </body>

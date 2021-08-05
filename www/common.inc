@@ -5697,16 +5697,17 @@ function get_top7_day_selection($day, $p)
         $ranks2 = get_rank7_one_day(c_barrage_day, $top7team);
 #        $ranks  = array($ranks1[0], $ranks1[1], $ranks2[1], $ranks2[0]);
         $ranks  = array($ranks1[0], $ranks1[1], $ranks2[0], $ranks2[1]);
-        printr_log(__FUNCTION__, "ranks1 day=28", $ranks1);
-        printr_log(__FUNCTION__, "ranks2 day=28", $ranks2);
-        printr_log(__FUNCTION__, "ranks day=28", $ranks);
+        printr_log(__FUNCTION__, "ranks1 day=$day", $ranks1);
+        printr_log(__FUNCTION__, "ranks2 day=$day", $ranks2);
     }
     if ($day == c_finale_day) {
         $ranks = get_rank7_one_day(c_demifinales_day, $top7team);
     }
 
-    if (count($ranks) == 0) {
+    printr_log(__FUNCTION__, "ranks day=$day", $ranks);
+    if (count($ranks) == 0 or $day == 1) {
         $ranks = get_random_rank7($top7team);
+        printr_log(__FUNCTION__, "ranks day=$day - random", $ranks);
     }
 
     $query = "select * from ";

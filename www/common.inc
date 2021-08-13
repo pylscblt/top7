@@ -5872,7 +5872,7 @@ function init_time_session()
     if ($now < $time_season_opened) $day = 0;
 
     if ($now < $season_start) $_SESSION['last_season'] = $season;
-    else $_SESSION['last_season'] = $season - 1;
+    else $_SESSION['last_season'] = $season;  # TODO to fix later 
 
     if ($day > c_last_day) {
         $deadline1 = $monday + 3 * 24 * 3600 - 60;

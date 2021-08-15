@@ -216,7 +216,7 @@ $f_debugs = array(
     "get_top7_day_selection",
     #    "get_top7_matchs",
     #    "get_random_rank7",
-    #    "get_rank7",
+    "get_rank7",
     "get_rank7_finales",
     #    "get_nb_different_team",
     #    "get_last_day",
@@ -3215,9 +3215,10 @@ function get_random_rank7($top7team)
         $d         = explode("-", $r[0]);
         $t         = explode(":", $r[1]);
         $timestamp = mktime($t[0], $t[1], $t[2], $d[1], $d[2], $d[0]);
-        if ($row['captain']) {
-            $timestamp += 3600 * 24;
-        }
+        // Issue #10 -> remove captain as 1st position in rank order
+        #if ($row['captain']) {
+        #    $timestamp += 3600 * 24;
+        #}
         // ticket 52
         $row['timestamp'] = $timestamp;
         $timestamps[]     = $timestamp;

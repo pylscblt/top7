@@ -399,10 +399,11 @@ function sql($login)
     $database = $top7_db['database'];
     $user     = $login['user'];
     $password = $login['password'];
+    $charset  = "utf8mb4";
 
     global $pdo;
     try {
-        $pdo = new PDO("mysql:dbname=$database;host=$server;charset=utf8", $user, $password);
+        $pdo = new PDO("mysql:dbname=$database;host=$server;charset=$charset", $user, $password);
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch (Exception $e) {
         print_log("error", "sql", "db init");

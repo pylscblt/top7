@@ -313,7 +313,7 @@ function print_header_head($class, $utf8, $js)
     // response is promise with passed token
         grecaptcha.execute('" . c_recaptcha_public_key . "', {action:'validate_captcha'}).then(function(token) {
         // add token value to form
-            console.log('token : ' + token);
+            // console.log('token : ' + token);
             document.getElementById('g-recaptcha-response').value = token;
         });
     });
@@ -4691,6 +4691,11 @@ function put_login_form($token)
     echo "</table>\n";
 
     echo "<input type=\"hidden\" name=\"token\" value=\"$token\">\n";
+
+    // google recaptcha
+    echo "<input type=\"hidden\" id=\"g-recaptcha-response\" name=\"g-recaptcha-response\">\n";
+    echo "<input type=\"hidden\" name=\"action\" value=\"validate_captcha\">\n";
+
     echo "</form>\n";
 
     echo "</div>\n";

@@ -2,6 +2,21 @@
 
 	include("common.inc");
 
+	printr_log("login.php", "_POST", $_POST);
+	printr_log("login.php", "_SESSION", $_SESSION);
+
+	# TODO See how to use the flag $captcha
+	if (isset($_POST['g-recaptcha-response'])) {
+		$captcha = $_POST['g-recaptcha-response'];
+		print_log("login.php", "captcha", $captcha);
+		print_log("login.php", "request", "https://www.google.com/recaptcha/api/siteverify?secret=" . c_recaptcha_secret_key . "&response=" . $captcha . "&remoteip=" . $_SERVER['REMOTE_ADDR']);
+		$response = file_get_contents("https://www.google.com/recaptcha/api/siteverify?secret=" . c_recaptcha_secret_key . "&response=" . $captcha . "&remoteip=" . $_SERVER['REMOTE_ADDR']);
+		$captcha_response = json_decode($response, true);
+		printr_log("login.php", "captcha_response", $captcha_response);
+	} else {
+		$captcha = false;
+	}
+	
 
 	session_start();
 	if( isset( $_POST['token']) and isset( $_SESSION['token']) 

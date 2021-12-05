@@ -916,3 +916,8 @@ td.alert {
     font-size: 150%;
     text-align: center;
 }
+
+.grecaptcha-badge {
+    bottom:50px !important;
+}
+  

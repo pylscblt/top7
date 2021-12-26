@@ -236,6 +236,7 @@ $f_debugs = array(
     "update_rank_phase_finale",
     "update_register",
     #    "check_game_closed",
+    "login.php",
     "register.php",
     "register_new_season.php",
     "recaptcha",
@@ -305,7 +306,7 @@ function print_header_head($class, $utf8, $js)
     echo "<link rel=\"stylesheet\" href=\"common.css\" type=\"text/css\">\n";
 
     echo "<script src=\"common.js\"></script>\n";
-    if ($class == "register" && c_prod == "ovh") {
+    if (($class == "register" || $class == "login") && c_prod == "ovh") {
         echo "<script src=\"https://www.google.com/recaptcha/api.js?render=" . c_recaptcha_public_key . "\"></script>\n";
         echo "<script>
     grecaptcha.ready(function() {
@@ -4257,8 +4258,8 @@ function put_password_form($action)
     echo "</tr>\n";
 
     echo "<tr>\n";
-    echo "<td colspan=\"2\">";
-    $size = c_password_size;
+    echo "<td colspan=\"1\">";
+    $size = c_email_size;
     echo "<input class=\"login\" autofocus=\"autofocus\" type=\"email\" size=\"$size\" id=\"email\" name=\"email\" placeholder=\"Ton email\">\n";
     echo "<span id=\"resultemail\"></span>\n";
     echo "</td>\n";
@@ -4270,12 +4271,12 @@ function put_password_form($action)
     echo "</td>\n";
     echo "</form>\n";
 
-    $action = "./";
-    echo "<form id=\"CancelForm\" action=\"$action\" method=\"post\">\n";
-    echo "<td>";
-    echo "<input type=\"submit\" id=\"CancelButton\" name=\"button\" value=\"Annuler\">\n";
-    echo "</td>\n";
-    echo "</form>\n";
+  #  $action = "./";
+  #  echo "<form id=\"CancelForm\" action=\"$action\" method=\"post\">\n";
+  #  echo "<td>";
+  #  echo "<input type=\"submit\" id=\"CancelButton\" name=\"button\" value=\"Annuler\">\n";
+  #  echo "</td>\n";
+  #  echo "</form>\n";
 
     echo "</tr>\n";
 
@@ -4652,28 +4653,28 @@ function put_login_form($token)
     echo "</tr>\n";
 
     echo "<tr>\n";
-    echo "<td align=\"left\">";
+    echo "<td align=\"center\">";
     $size = c_email_size;
     echo "<input class=\"login\" autofocus=\"autofocus\" type=\"text\" size=\"$size\" name=\"login\" placeholder=\"Ton email\">";
     echo "</td>\n";
     echo "</tr>\n";
 
     echo "<tr>\n";
-    echo "<td align=\"left\">";
-    $size = c_password_size;
+    echo "<td align=\"center\">";
+    $size = c_email_size;
     echo "<input class=\"login\" type=\"password\" size=\"$size\" name=\"password\" placeholder=\"Ton mot de passe\">";
     echo "</td>\n";
     echo "</tr>\n";
 
     echo "<tr>\n";
-    echo "<td align=\"left\">";
+    echo "<td align=\"center\">";
     $legend = c_msg_home_legend1;
     echo "<a class=\"login\" href=\"password\">$legend</a>\n";
     echo "</td>\n";
     echo "</tr>\n";
 
     echo "<tr>\n";
-    echo "<td align=\"left\">";
+    echo "<td align=\"center\">";
     echo "<input type=\"submit\" id=\"ConnectButton\" name=\"button\" value=\"Se connecter\">";
     echo "</td>\n";
     echo "</tr>\n";

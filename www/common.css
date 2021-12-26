@@ -401,7 +401,7 @@ select, input[type="submit"] {
 }
 
 #EnterButton, #ConnectButton, #RegisterButton, #ResetPasswordButton {
-  	width: 150px;
+  	width: 270px;
   	background-color: #ff9900;
 }
 #EnterButton:hover, #ConnectButton:hover, #RegisterButton:hover, #ResetPasswordButton:hover {

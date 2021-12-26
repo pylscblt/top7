@@ -4487,9 +4487,12 @@ function put_register_form($team, $pseudos, $emails, $errors, $action="register"
         echo "</tr>\n";
     }
 
+    echo "</table>\n";
+
+    echo "<table>\n";
     echo "<tr>\n";
-    echo "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-    echo "</td>\n";
+   # echo "<td>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+   # echo "</td>\n";
     echo "<td align=\"center\">\n";
 
     // google recaptcha
@@ -4502,12 +4505,12 @@ function put_register_form($team, $pseudos, $emails, $errors, $action="register"
     echo "</td>\n";
 
 
-    $action = "./";
-    echo "<td align=\"center\">\n";
-    echo "<form id=\"CancelForm\" action=\"$action\" method=\"post\">\n";
-    echo "<input type=\"submit\" id=\"CancelButton\" name=\"button\" value=\"Annuler\">\n";
-    echo "</form>\n";
-    echo "</td>\n";
+    #$action = "./";
+    #echo "<td align=\"center\">\n";
+    #echo "<form id=\"CancelForm\" action=\"$action\" method=\"post\">\n";
+    #echo "<input type=\"submit\" id=\"CancelButton\" name=\"button\" value=\"Annuler\">\n";
+    #echo "</form>\n";
+    #echo "</td>\n";
     echo "</tr>\n";
 
     echo "</table>\n";

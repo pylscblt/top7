@@ -4260,7 +4260,7 @@ function put_password_form($action)
     echo "<tr>\n";
     echo "<td colspan=\"1\">";
     $size = c_email_size;
-    echo "<input class=\"login\" autofocus=\"autofocus\" type=\"email\" size=\"$size\" id=\"email\" name=\"email\" placeholder=\"Ton email\">\n";
+    echo "<input class=\"login\" autofocus=\"autofocus\" type=\"email\" id=\"email\" name=\"email\" placeholder=\"Ton email\">\n";
     echo "<span id=\"resultemail\"></span>\n";
     echo "</td>\n";
     echo "</tr>\n";
@@ -4655,14 +4655,14 @@ function put_login_form($token)
     echo "<tr>\n";
     echo "<td align=\"center\">";
     $size = c_email_size;
-    echo "<input class=\"login\" autofocus=\"autofocus\" type=\"text\" size=\"$size\" name=\"login\" placeholder=\"Ton email\">";
+    echo "<input class=\"login\" autofocus=\"autofocus\" type=\"text\" name=\"login\" placeholder=\"Ton email\">";
     echo "</td>\n";
     echo "</tr>\n";
 
     echo "<tr>\n";
     echo "<td align=\"center\">";
     $size = c_email_size;
-    echo "<input class=\"login\" type=\"password\" size=\"$size\" name=\"password\" placeholder=\"Ton mot de passe\">";
+    echo "<input class=\"login\" type=\"password\" name=\"password\" placeholder=\"Ton mot de passe\">";
     echo "</td>\n";
     echo "</tr>\n";
 

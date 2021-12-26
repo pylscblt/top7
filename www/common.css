@@ -67,7 +67,7 @@ div.loginbox1 {
 	left: 0;
 	right: 0;
    	width: 530px;
-   	height: 560px;
+   	height: 580px;
    	background-color: rgba(110,110,103,0.75);
     text-align: center;
    	opacity: 0.90;
@@ -119,7 +119,7 @@ div.passwordbox1 {
 	left: 0;
 	right: 0;
    	width: 470px;
-   	height: 270px;
+   	height: 300px;
    	background-color: #6E6767;
     text-align: center;
    	opacity: 0.90;
@@ -266,6 +266,7 @@ input.login {
   	height: 20px;
    	padding: 10px;
 	font-size: 12px;
+	width: 280px;
 }
 
 input.error {
@@ -401,7 +402,8 @@ select, input[type="submit"] {
 }
 
 #EnterButton, #ConnectButton, #RegisterButton, #ResetPasswordButton {
-  	width: 270px;
+  	width: 300px;
+	height: 40px;
   	background-color: #ff9900;
 }
 #EnterButton:hover, #ConnectButton:hover, #RegisterButton:hover, #ResetPasswordButton:hover {

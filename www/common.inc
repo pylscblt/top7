@@ -202,7 +202,7 @@ $f_debugs = array(
     "check_player_phase_finale",
     #    "check_player_phase_reguliere",
     #    "check_prono_not_taken",
-    #    "get_day_from_date",
+    "get_day_from_date",
     #    "get_time_game_closed",
     #    "get_last_day_from_date",
     #    "get_last_day_season",
@@ -4040,6 +4040,7 @@ function get_day_from_date()
     // ################
     //  PYL 16Nov2020
     # $day = 19;
+    # $day = 14;
     // ###############
     print_log(__FUNCTION__, "day", $day);
     return $day;
@@ -4505,12 +4506,13 @@ function put_register_form($team, $pseudos, $emails, $errors, $action="register"
     echo "</td>\n";
 
 
-    #$action = "./";
-    #echo "<td align=\"center\">\n";
-    #echo "<form id=\"CancelForm\" action=\"$action\" method=\"post\">\n";
-    #echo "<input type=\"submit\" id=\"CancelButton\" name=\"button\" value=\"Annuler\">\n";
-    #echo "</form>\n";
-    #echo "</td>\n";
+    $action = "./";
+    echo "<td align=\"center\">\n";
+    echo "<form id=\"CancelForm\" action=\"$action\" method=\"post\">\n";
+    echo "<input type=\"submit\" id=\"CancelButton\" name=\"button\" value=\"Annuler\">\n";
+    echo "</form>\n";
+    echo "</td>\n";
+    
     echo "</tr>\n";
 
     echo "</table>\n";

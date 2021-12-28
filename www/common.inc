@@ -370,7 +370,9 @@ function print_header_display($t)
 
 function error($function, $line)
 {
+    global $debug;
     print_log(__FUNCTION__, $function, $line);
+    if($debug === false) header('location: index');
     $d = date("Ymd G:i:s ");
     die("<pre>TOP7 - Error - See log at $d !</pre>");
 }

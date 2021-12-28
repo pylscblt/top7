@@ -26,7 +26,7 @@ define( "c_recaptcha_public_key", "");
 define( "c_recaptcha_secret_key", "");
 
 define("c_recaptcha_score", 0.8);
-define("c_google_gtag", "google_gtag.html");
+define("c_google_gtag", "conf/google_gtag.html");
 
 define( "c_logo_file", 	"logo.png");
 
@@ -122,12 +122,12 @@ $alert_msgs = array (
 function now() {
     global $TOP7_DATE;  // used for DEBUG
 	$now = time();
-	$now = time()+24*3600*1;
+	#$now = time()+24*3600*1;
 	#$now = strtotime("2017-12-30");
 	#$now = strtotime("2017-05-06");
     if( isset($TOP7_DATE)) $now = strtotime($TOP7_DATE);
 	$now = time();
-	#$now = strtotime("2020-10-12");
+	#$now = strtotime("2021-09-06 18:00:00");
 	return $now;
 }
 

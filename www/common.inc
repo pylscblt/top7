@@ -4023,16 +4023,16 @@ function get_team14_matchs($team, $season)
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
-function get_day_from_date($now, $season)
+function get_day_from_date()
 {
+    $now = now();
     $today = date("Y-m-d", $now);
 
     $query = "select day from `calendar` ";
-    $query .= "where season=$season and date >= \"$today\" order by date limit 1";
+    $query .= "where date >= \"$today\" order by date limit 1";
     $rows = pdo_fetch(__FUNCTION__, c_one, $query);
 
     print_log(__FUNCTION__, "today", $today);
-    print_log(__FUNCTION__, "day", $day);
 
     return $rows['day'];
 }
@@ -5888,7 +5888,7 @@ function init_time_session()
     $day = get_last_day_from_date($now, $season);
     #    $day=13;
     
-    $today              = get_day_from_date($now, $season);
+    $today              = get_day_from_date();
     $monday             = get_monday_from_day($day, $today, $season);
     $time_game_closed   = $monday + c_time_game_closed - 10;
     $time_game_closed   = get_time_game_closed($day, $today, $season, $monday); // ticket 1+22

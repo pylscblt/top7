@@ -2705,10 +2705,6 @@ function update_match($p)
         $d2     = true;
         $point1 = 4;
         $point2 = 0;
-        if (($try1 - $try2) >= 3) {
-            $bo1 = true;
-            $point1++;
-        }
         if (($score1 - $score2) <= 5) {
             $bd2 = true;
             $point2++;
@@ -2724,19 +2720,24 @@ function update_match($p)
         $point1 = 0;
         $point2 = 4;
         $ve     = true;
-        if (($try2 - $try1) >= 3) {
-            $bo2 = true;
-            $point2++;
-        }
-        if (($try1 - $try2) >= 3) {
-            $bo1 = true;
-            $point1++;
-        }
         if (($score2 - $score1) <= 5) {
             $bd1 = true;
             $point1++;
         }
     }
+
+    if (($try1 - $try2) >= 3) {
+        $bo1 = true;
+        $point1++;
+    }
+    if (($try2 - $try1) >= 3) {
+        $bo2 = true;
+        $point2++;
+    }
+
+    print_log(__FUNCTION__, "bo1", $bo1);
+    print_log(__FUNCTION__, "bo2", $bo2);
+
     // /!\ V flags can be forced by admin
     if (isset($p['v1'])) {
         $v1 = true;

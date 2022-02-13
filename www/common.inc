@@ -228,6 +228,8 @@ $f_debugs = array(
     #    "update_prono",
     #    "update_match_prono",
     "update_season_dates",
+    "get_point_coiffeur",
+    "update_point_coiffeur",
     #    "send_email_next_player",
     #    "send_email_forum",
     "LNR_rank",
@@ -1736,7 +1738,7 @@ function display($p)
                     $top7icon = c_icon_rugby;
                 }
 
-                if ($match['bo2']) {
+                if ($match['bo2'] and $localwinner == false) {
                     $top7icon   = c_icon_coiffeur;
                     $localclass = "top7loser";
                 }
@@ -1747,7 +1749,7 @@ function display($p)
                     $top7icon = c_icon_rugby;
                 }
 
-                if ($match['bo1']) {
+                if ($match['bo1'] and $visiteurwinner == false) {
                     $top7icon      = c_icon_coiffeur;
                     $visiteurclass = "top7loser";
                 }
@@ -1903,7 +1905,7 @@ function display($p)
                             $top7icon = c_icon_rugby;
                         }
 
-                        if ($match['bo2']) {
+                        if ($match['bo2'] and $localwinner == false) {
                             $top7icon    = c_icon_coiffeur;
                             $localclass  = "top7loser";
                             $playerclass = "playercoiffeur";
@@ -1917,7 +1919,7 @@ function display($p)
                             $top7icon = c_icon_rugby;
                         }
 
-                        if ($match['bo1']) {
+                        if ($match['bo1'] and $visiteurwinner == false) {
                             $top7icon      = c_icon_coiffeur;
                             $visiteurclass = "top7loser";
                             $playerclass   = "playercoiffeur";
@@ -2439,10 +2441,10 @@ function update_equipe_differente($day, $season)
     }
 }
 
-function update_point_coiffeur($day, $season)
+function update_point_coiffeur_OLD($day, $season)
 {
 
-    // pc : Points Coiffeur = BO de l'équipe non pronostiquée
+    // pc : Points Coiffeur = BO de l'équipe non pronostiquée ET qui gagne le match
     $query = "select pseudo, ";
     $query .= "player_idx as player, ";
     $query .= "sum(score.bo) as pc ";
@@ -2462,12 +2464,74 @@ function update_point_coiffeur($day, $season)
     $query .= "where score.day<=$day and player.season=$season ";
     $query .= "group by player_idx ";
     $rows = pdo_fetch(__FUNCTION__, c_all, $query);
+    printr_log(__FUNCTION__, "rows", $rows);
     $pcs  = array();
     foreach ($rows as $row) {
         $pcs[$row['player']] = $row['pc'];
     }
+    printr_log(__FUNCTION__, "pcs", $pcs);
+
 
     foreach ($pcs as $player => $pc) {
+        $query = "update `player` ";
+        $query .= "set `pc`='$pc' ";
+        $query .= "where `player_idx`='$player'";
+        pdo_exec(__FUNCTION__, $query);
+    }
+}
+
+function get_point_coiffeur($day, $season)
+{
+    // liste des players
+    $query = "select player_idx from `player` where player.season=$season";
+    $rows = pdo_fetch(__FUNCTION__, c_all, $query);
+    $players = array();
+    foreach ($rows as $row) {
+        $players[$row['player_idx']] = 0;
+    }
+    printr_log(__FUNCTION__, "players", $players);
+
+    // pc : Points Coiffeur = BO de l'équipe non pronostiquée ET défaite de l'équipe pronostiquée
+    $query = "SELECT total.player_idx, total.pseudo, total.top7team, count(total.player_idx) AS pc FROM (";
+    $query .= "SELECT player.pseudo, player.team AS top7team, player.player_idx, prono.day, prono.team, s1.D, s1.team AS t1, s2.bo, s2.team AS t2, match.team1, match.team2 ";
+    $query .= "FROM `match` ";
+    $query .= "JOIN `score`AS s1 ON match.day=s1.day and match.season=s1.season and match.team1=s1.team and s1.bo=1 ";
+    $query .= "JOIN `score`AS s2 ON match.day=s2.day and match.season=s2.season and match.team2=s2.team and s2.D=1 ";
+    $query .= "JOIN `prono`ON match.day=prono.day and match.season=prono.season and match.team2=prono.team ";
+    $query .= "JOIN `player` ON prono.player=player.player_idx ";
+    $query .= "WHERE prono.season=$season and prono.day<=$day ";
+    $query .= "ORDER BY prono.day) AS total  ";
+    $query .= "GROUP BY total.player_idx";
+    $rows1 = pdo_fetch(__FUNCTION__, c_all, $query);
+    printr_log(__FUNCTION__, "rows point coiffeur", $rows1);
+
+    // pc : Points Coiffeur = BO de l'équipe non pronostiquée ET défaite de l'équipe pronostiquée
+    $query = "SELECT total.player_idx, total.pseudo, total.top7team, count(total.player_idx) AS pc FROM (";
+    $query .= "SELECT player.pseudo, player.team AS top7team, player.player_idx, prono.day, prono.team, s1.D, s1.team AS t1, s2.bo, s2.team AS t2, match.team1, match.team2 ";
+    $query .= "FROM `match` ";
+    $query .= "JOIN `score`AS s1 ON match.day=s1.day and match.season=s1.season and match.team2=s1.team and s1.bo=1 ";
+    $query .= "JOIN `score`AS s2 ON match.day=s2.day and match.season=s2.season and match.team1=s2.team and s2.D=1 ";
+    $query .= "JOIN `prono`ON match.day=prono.day and match.season=prono.season and match.team1=prono.team ";
+    $query .= "JOIN `player` ON prono.player=player.player_idx ";
+    $query .= "WHERE prono.season=$season and prono.day<=$day ";
+    $query .= "ORDER BY prono.day) AS total  ";
+    $query .= "GROUP BY total.player_idx";
+    $rows2 = pdo_fetch(__FUNCTION__, c_all, $query);
+    printr_log(__FUNCTION__, "rows point coiffeur", $rows2);
+
+    $rows = array_merge($rows1, $rows2);
+    printr_log(__FUNCTION__, "rows point coiffeur", $rows);
+
+    return $rows;
+}
+
+function update_point_coiffeur($day, $season)
+{
+    $rows = get_point_coiffeur($day, $season);
+    foreach ($rows as $row) {
+        $pc = $row['pc'];
+        $player = $row['player_idx'];
+        print_log(__FUNCTION__, "point coiffeur: player - pc", "$player $pc");
         $query = "update `player` ";
         $query .= "set `pc`='$pc' ";
         $query .= "where `player_idx`='$player'";
@@ -3420,32 +3484,25 @@ function display_rank7($p)
         $pfun[$row['player']] = $row['fun'];
     }
 
-    // pc : Points Coiffeur = BO de l'équipe non pronostiquée
-    $query = "select pseudo, ";
-    $query .= "player_idx as player, ";
-    $query .= "coalesce(sum(score.bo),0) as pc ";
-    $query .= "from `player` left join ( ";
-    $query .= "	select * from ( ";
-    $query .= "		select team1 as new_team, prono.day, prono.season, player  ";
-    $query .= "		from `match` join `prono` on match.day=prono.day and match.season=prono.season ";
-    $query .= "		where prono.team=team2 ";
-    $query .= "		union  ";
-    $query .= "		select team2 as new_team, prono.day, prono.season, player  ";
-    $query .= "		from `match` join `prono` on match.day=prono.day and match.season=prono.season ";
-    $query .= "		where prono.team=team1 ";
-    $query .= "	) as tt ";
-    $query .= "	order by day, player) as new_prono ";
-    $query .= "on player_idx=new_prono.player ";
-    $query .= "left join `score` on new_prono.new_team=score.team and new_prono.day=score.day and new_prono.season=score.season ";
-    $query .= "where (score.day<=$day or score.day is NULL) and player.team=$top7team ";
-    $query .= "group by player_idx ";
-
-    $rows = pdo_fetch(__FUNCTION__, c_all, $query);
-    $pcs  = array();
-    $i    = 0;
+    // pc : Points Coiffeur 
+    $query = "select player_idx as player ";
+    $query .= "from player ";
+    $query .= "where season=$season and player.team=$top7team ";
+    $rows  = pdo_fetch(__FUNCTION__, c_all, $query);
+    $pcs = array();
     foreach ($rows as $row) {
-        $pcs[$row['player']] = $row['pc'];
+        $pcs[$row['player']] = 0;
     }
+    
+    $rows = get_point_coiffeur($day, $season);
+    foreach ($rows as $row) {
+        $player = $row['player_idx'];
+        if (array_key_exists($player, $pcs)) {
+            $pcs[$player] = $row['pc'];
+        }
+    }
+
+    $i    = 0;
 
     // classement at day-1
     $day_before = 1;

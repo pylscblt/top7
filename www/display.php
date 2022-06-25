@@ -5,6 +5,7 @@
 
 	init_sql();
 
+
 	$alert = 0;
 	if( isset( $_SESSION['alert'])) {
 		$alert = $_SESSION['alert'];

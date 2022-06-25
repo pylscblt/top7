@@ -198,9 +198,9 @@ $f_debugs = array(
     "put_status",
     "check_player", // don't remove
     "check_status_player",
-    #    "check_date_player",
+    "check_date_player",
     "check_player_phase_finale",
-    #    "check_player_phase_reguliere",
+    "check_player_phase_reguliere",
     #    "check_prono_not_taken",
     "get_day_from_date",
     #    "get_time_game_closed",
@@ -217,6 +217,7 @@ $f_debugs = array(
     #    "get_top7_matchs",
     #    "get_random_rank7",
     "get_rank7",
+    "display_rank7",
     "get_rank7_finales",
     #    "get_nb_different_team",
     #    "get_last_day",
@@ -3223,6 +3224,9 @@ function get_nb_different_teams($day, $season, $player, $t)
 function get_rank7($day, $top7team)
 {
 
+
+    print_log(__FUNCTION__, "day", $day);
+
     $query = "select * from ( ";
 
     //  scores du classement
@@ -3462,6 +3466,7 @@ function calcul_point_fun($row)
 
 function display_rank7($p)
 {
+    printr_log(__FUNCTION__, "p", $p);
 
     $top7team = 0;
     if (isset($p['top7team'])) {
@@ -4086,12 +4091,14 @@ function get_day_from_date()
     $now = now();
     $today = date("Y-m-d", $now);
 
-    $query = "select day from `calendar` ";
-    $query .= "where date >= \"$today\" order by date limit 1";
+    $query = "select ifnull(";
+    $query .= "(select day from `calendar` ";
+    $query .= "where date >= \"$today\" order by date limit 1)";
+    $query .= ", " . c_last_day . ") as day";
     $rows = pdo_fetch(__FUNCTION__, c_one, $query);
 
     print_log(__FUNCTION__, "today", $today);
-
+    printr_log(__FUNCTION__, "rows", $rows);
     return $rows['day'];
 }
 
@@ -5764,6 +5771,8 @@ function check_status_player($p)
 
 function get_top7_day_selection($day, $p)
 {
+    printr_log(__FUNCTION__, "p", $p);
+    print_log(__FUNCTION__, "day", $day);
 
     global $phase_finale_player;
 
@@ -5784,6 +5793,9 @@ function get_top7_day_selection($day, $p)
         $ranks2 = get_rank7_one_day(c_barrage_day, $top7team);
 #        $ranks  = array($ranks1[0], $ranks1[1], $ranks2[1], $ranks2[0]);
         $ranks  = array($ranks1[0], $ranks1[1], $ranks2[0], $ranks2[1]);
+        $ranks  = array($ranks1[1], $ranks1[0], $ranks2[1], $ranks2[0]);
+        
+        
         printr_log(__FUNCTION__, "ranks1 day=$day", $ranks1);
         printr_log(__FUNCTION__, "ranks2 day=$day", $ranks2);
     }
@@ -5988,6 +6000,7 @@ function check_date_player($p)
 
     $day = $p['day'];
     print_log(__FUNCTION__, "day", $day);
+    printr_log(__FUNCTION__, "p", $p);
     if ($day <= c_last_day) {
         $game = check_player_phase_reguliere($p);
     }
@@ -6204,6 +6217,7 @@ function check_player_phase_reguliere($p)
         $res = c_not_opened;
     }
 
+    printr_log(__FUNCTION__,"SESSION", $_SESSION);
     return $res;
 }
 

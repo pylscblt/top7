@@ -198,9 +198,9 @@ $f_debugs = array(
     "put_status",
     "check_player", // don't remove
     "check_status_player",
-    "check_date_player",
+    #    "check_date_player",
     "check_player_phase_finale",
-    "check_player_phase_reguliere",
+    #    "check_player_phase_reguliere",
     #    "check_prono_not_taken",
     "get_day_from_date",
     #    "get_time_game_closed",
@@ -217,7 +217,6 @@ $f_debugs = array(
     #    "get_top7_matchs",
     #    "get_random_rank7",
     "get_rank7",
-    "display_rank7",
     "get_rank7_finales",
     #    "get_nb_different_team",
     #    "get_last_day",
@@ -3224,9 +3223,6 @@ function get_nb_different_teams($day, $season, $player, $t)
 function get_rank7($day, $top7team)
 {
 
-
-    print_log(__FUNCTION__, "day", $day);
-
     $query = "select * from ( ";
 
     //  scores du classement
@@ -3466,7 +3462,6 @@ function calcul_point_fun($row)
 
 function display_rank7($p)
 {
-    printr_log(__FUNCTION__, "p", $p);
 
     $top7team = 0;
     if (isset($p['top7team'])) {
@@ -4098,7 +4093,7 @@ function get_day_from_date()
     $rows = pdo_fetch(__FUNCTION__, c_one, $query);
 
     print_log(__FUNCTION__, "today", $today);
-    printr_log(__FUNCTION__, "rows", $rows);
+
     return $rows['day'];
 }
 
@@ -5019,8 +5014,8 @@ function put_player_link($p)
 
     if ($register_new_season) {
         echo "<tr>\n";
-        echo "<td class=\"alert\" colspan=\"3\">\n";
-        echo "Nouvelle $new_season, <a href=\"register_new_season\" title=\"Capitaine, réinscrit ton équipe pour la nouvelle saison\">clique ici !</a>";
+        echo "<td class=\"alert\" colspan=\"4\">\n";
+        echo "Nouvelle $new_season, <a href=\"register_new_season\" title=\"Capitaine, réinscrit ton équipe pour la nouvelle saison\">Capitaine, clique ici pour réinscrire ton équipe !</a>";
         echo "</td>\n";
         echo "</tr>\n";
     }
@@ -5653,8 +5648,12 @@ function get_rss($file, $nb_news)
             $s             = strip_tags($item->description, "<p>");
             $n             = stripos($s, "</p>") + 5;
             #echo "n=$n";
-            $news["description"] = strip_tags(substr($s, 0, $n));
+            #$news["description"] = strip_tags(substr($s, 0, $n));
             #$news["description"] = $item->description;
+            $description = $item->description;
+            # Issue #20 -> "/" is the delimiter to extract the title
+            $pos = stripos($description, "/");
+            $news["description"] = substr($description, 0, $pos);
             $t_news[] = $news;
             $i++;
             if ($i > $nb_news) {
@@ -5771,8 +5770,6 @@ function check_status_player($p)
 
 function get_top7_day_selection($day, $p)
 {
-    printr_log(__FUNCTION__, "p", $p);
-    print_log(__FUNCTION__, "day", $day);
 
     global $phase_finale_player;
 
@@ -5794,8 +5791,8 @@ function get_top7_day_selection($day, $p)
 #        $ranks  = array($ranks1[0], $ranks1[1], $ranks2[1], $ranks2[0]);
         $ranks  = array($ranks1[0], $ranks1[1], $ranks2[0], $ranks2[1]);
         $ranks  = array($ranks1[1], $ranks1[0], $ranks2[1], $ranks2[0]);
-        
-        
+        $ranks  = array($ranks1[1], $ranks1[0], $ranks2[0], $ranks2[1]);
+# DEMIFINALES
         printr_log(__FUNCTION__, "ranks1 day=$day", $ranks1);
         printr_log(__FUNCTION__, "ranks2 day=$day", $ranks2);
     }
@@ -5881,6 +5878,7 @@ function get_top7_day_selection($day, $p)
         $i                   = 0;
         $idx                 = 0;
         $idx_barrage_day     = array(0, 0, 1, 2, 2, 1); # button to display when display=c_top7_player
+        $idx_barrage_day     = array(0, 0, 2, 1, 1, 2); # button to display when display=c_top7_player
         $idx_demifinales_day = array(1, 2, 2, 1); # button to display when display=c_top7_player
         $idx_finale_day      = array(1, 2); # button to display when display=c_top7_player
         if (count($players)) {
@@ -6000,7 +5998,6 @@ function check_date_player($p)
 
     $day = $p['day'];
     print_log(__FUNCTION__, "day", $day);
-    printr_log(__FUNCTION__, "p", $p);
     if ($day <= c_last_day) {
         $game = check_player_phase_reguliere($p);
     }
@@ -6217,7 +6214,6 @@ function check_player_phase_reguliere($p)
         $res = c_not_opened;
     }
 
-    printr_log(__FUNCTION__,"SESSION", $_SESSION);
     return $res;
 }
 

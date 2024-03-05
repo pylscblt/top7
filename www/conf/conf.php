@@ -30,7 +30,8 @@ define("c_google_gtag", "conf/google_gtag.html");
 define( "c_logo_file", 	"logo.png");
 
 define( "c_display_blog", 	true);
-define( "c_url_blog", 		"http://www.lesbrevesdovalie.com/rss.xml");
+#define( "c_url_blog", 		"http://www.lesbrevesdovalie.com/rss.xml");
+define( "c_url_blog", 		"http://www.lesbrevesdovalie.com/rss");
 define( "c_file_blog", 		"rss.xml");
 define( "c_nb_news",		5);
 define( "c_url_github", 	"https://github.com/pylscblt/top7");

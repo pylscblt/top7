@@ -215,7 +215,8 @@ $f_debugs = array(
     #    "get_final_results",
     "get_top7_day_selection",
     #    "get_top7_matchs",
-    #    "get_random_rank7",
+    "get_previous_season_rank7",
+    "get_random_rank7",
     "get_rank7",
     "get_rank7_finales",
     #    "get_nb_different_team",
@@ -3271,6 +3272,36 @@ function get_rank7($day, $top7team)
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
+function get_previous_season_rank7($top7team)
+{
+    $top7_season = get_top7_season();
+    printr_log(__FUNCTION__, "top7_season", $top7_season);
+    $season = intval($top7_season['Id']);
+    $previous_season = $season - 1;
+    $query = "select email, rank, rankFinal from player ";
+    $query .= "where season=$previous_season and ";
+    $query .= "email in (select email from player where season=$season and team=$top7team) ";
+    $query .= "order by rankFinal desc";
+    $previous_ranks       = pdo_fetch(__FUNCTION__, c_all, $query);
+    printr_log(__FUNCTION__, "previous_ranks", $previous_ranks);
+
+    $query = "select pseudo, player_idx as player, email, captain from player ";
+    $query .= " where team=$top7team ";
+    $temp_ranks       = pdo_fetch(__FUNCTION__, c_all, $query);
+    printr_log(__FUNCTION__, "temp_ranks", $temp_ranks);
+
+    $ranks = array();
+    foreach ($previous_ranks as $row1) {
+        foreach ($temp_ranks as $row2) {
+            if ($row1['email'] == $row2['email']) {
+                $ranks[] = $row2; 
+            }
+        }
+    }
+    printr_log(__FUNCTION__, "ranks", $ranks);
+    return $ranks;
+}
+
 function get_random_rank7($top7team)
 {
 
@@ -5788,21 +5819,27 @@ function get_top7_day_selection($day, $p)
     if ($day == c_demifinales_day) {
         $ranks1 = get_rank7(c_last_day, $top7team);
         $ranks2 = get_rank7_one_day(c_barrage_day, $top7team);
-#        $ranks  = array($ranks1[0], $ranks1[1], $ranks2[1], $ranks2[0]);
+        #        $ranks  = array($ranks1[0], $ranks1[1], $ranks2[1], $ranks2[0]);
         $ranks  = array($ranks1[0], $ranks1[1], $ranks2[0], $ranks2[1]);
         $ranks  = array($ranks1[1], $ranks1[0], $ranks2[1], $ranks2[0]);
-        $ranks  = array($ranks1[1], $ranks1[0], $ranks2[0], $ranks2[1]);
+        if($top7team==54) $ranks  = array($ranks1[1], $ranks1[0], $ranks2[0], $ranks2[1]);  #TODO ALERT
 # DEMIFINALES
-        printr_log(__FUNCTION__, "ranks1 day=$day", $ranks1);
-        printr_log(__FUNCTION__, "ranks2 day=$day", $ranks2);
+        printr_log(__FUNCTION__, "ranks1 day=$day - top7team=$top7team", $ranks1);
+        printr_log(__FUNCTION__, "ranks2 day=$day - top7team=$top7team", $ranks2);
     }
     if ($day == c_finale_day) {
         $ranks = get_rank7_one_day(c_demifinales_day, $top7team);
+        if($top7team==54) {  #TODO ALERT
+            $_ranks = $ranks;
+            $ranks[0] = $_ranks[1];
+            $ranks[1] = $_ranks[0];
+        }
     }
 
     printr_log(__FUNCTION__, "ranks day=$day", $ranks);
     if (count($ranks) == 0 or $day == 1) {
-        $ranks = get_random_rank7($top7team);
+        $ranks = get_previous_season_rank7($top7team);  # Issue #16
+        # $ranks = get_random_rank7($top7team);
         printr_log(__FUNCTION__, "ranks day=$day - random", $ranks);
     }
 
@@ -5874,6 +5911,7 @@ function get_top7_day_selection($day, $p)
         }
 
         $selected_players = $phase_finale_player[$day][$phase];
+        printr_log(__FUNCTION__, "selected_players", $selected_players);
 
         $i                   = 0;
         $idx                 = 0;
@@ -5884,6 +5922,7 @@ function get_top7_day_selection($day, $p)
         if (count($players)) {
             foreach ($ranks as $rank) {
                 $player = $rank['player'];
+                print_log(__FUNCTION__, "player", $player);
                 if ($player == '') continue;
                 if ($players[$player]['registered'] == $players[$player]['played']) {
                     $prono = c_played;
@@ -5922,6 +5961,8 @@ function get_top7_day_selection($day, $p)
                         $players[$player],
                         array("deadline" => $deadline, "prono" => $prono, "status" => $status, "info" => $info, 'idx' => $idx)
                     );
+                    printr_log(__FUNCTION__, "selections ...", $selections);
+
                 }
                 $i++;
             }

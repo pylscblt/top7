@@ -2383,7 +2383,7 @@ function update_player_rank($day, $season)
         $i     = 1;
         foreach ($ranks as $rank) {
             $idx   = $rank['player'];
-            $query = "update `player` set rank=$i where `player_idx`=$idx";
+            $query = "update `player` set `rank`=$i where `player_idx`=$idx";
             pdo_exec(__FUNCTION__, $query);
             $i++;
         }
@@ -3278,7 +3278,7 @@ function get_previous_season_rank7($top7team)
     printr_log(__FUNCTION__, "top7_season", $top7_season);
     $season = intval($top7_season['Id']);
     $previous_season = $season - 1;
-    $query = "select email, rank, rankFinal from player ";
+    $query = "select email, `rank`, rankFinal from player ";
     $query .= "where season=$previous_season and ";
     $query .= "email in (select email from player where season=$season and team=$top7team) ";
     $query .= "order by rankFinal desc";

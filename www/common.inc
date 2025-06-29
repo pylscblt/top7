@@ -219,6 +219,7 @@ $f_debugs = array(
     "get_random_rank7",
     "get_rank7",
     "get_rank7_finales",
+    "get_palmares",
     #    "get_nb_different_team",
     #    "get_last_day",
     "get_player_from_email",
@@ -9177,6 +9178,7 @@ function palmares($p)
     if (isset($p['season'])) {
         $season = $p['season'];
     }
+    $season = 11;
 
     $title = "PALMARES DES CHAMPIONS";
     echo "<table id=\"palmares\" class=\"nav_stats\">\n";
@@ -9243,7 +9245,7 @@ function palmares($p)
         if ($idx == 1) echo "<tr class=\"palmares_$idx\">\n";
         else echo "<tr class=\"$rank\">\n";
         #echo "<td class=\"point\">$idx</td>\n";
-        echo "<td class=\"point\">" . $exaequo->proc($data['pts']) . "</td>\n";
+        echo "<td class=\"point\">" . $exaequo->proc(array($data['pts'], $data['count'])) . "</td>\n";
         echo "<td class=\"point\">" . $data['pseudo'] . "</td>\n";
         echo "<td class=\"point\">" . $data['team'] . "</td>\n";
         $stars = palmares_star_icon($data['count']);
@@ -9260,15 +9262,15 @@ class Exaequo
     function __construct()
     {
         $this->idx = 0;
-        $this->val = 0;
+        $this->arr = array();
     }
-    function proc($value)
+    function proc($array)
     {
         $print = True;
-        if ($this->idx == 0) $this->val = $value;
+        if ($this->idx == 0) $this->arr = $array;
         else {
-            if ($value == $this->val) $print = False;
-            else $this->val = $value;
+            if ($array == $this->arr) $print = False;
+            else $this->arr = $array;
         }
         $this->idx++;
         if ($print) return $this->idx;

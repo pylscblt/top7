@@ -5624,7 +5624,7 @@ function put_blog()
     foreach ($news as $new) {
         echo "<li>";
         echo "<a href=\"" . $new['link'] . "\" target=\"_blank\">" . $new['title'] . "</a>\n";
-        echo " : " . $new['description'];
+        #echo " : " . $new['description'];
         echo "</li>\n";
     }
     echo "</div>\n";

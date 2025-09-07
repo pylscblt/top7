@@ -13,7 +13,7 @@ $db_player = array(
 	"user"		=> "topseven",
 	"password"	=> "topseven");
 $top7_db = array(
-	"server"	=> "test_db_1",
+	"server"	=> "test-db-1",
 	"database"	=> "topseven");
 
 define("c_prod", "");
@@ -31,7 +31,7 @@ define("c_google_gtag", "conf/google_gtag.html");
 define( "c_logo_file", 	"logo.png");
 
 define( "c_display_blog", 	true);
-define( "c_url_blog", 		"http://www.lesbrevesdovalie.com/rss.xml");
+define( "c_url_blog", 		"http://www.lesbrevesdovalie.fr/rss.xml");
 define( "c_file_blog", 		"rss.xml");
 define( "c_nb_news",		5);
 define( "c_url_github", 	"https://github.com/pylscblt/top7");
@@ -122,12 +122,6 @@ $alert_msgs = array (
 function now() {
     global $TOP7_DATE;  // used for DEBUG
 	$now = time();
-	#$now = time()+24*3600*1;
-	#$now = strtotime("2017-12-30");
-	#$now = strtotime("2017-05-06");
-    if( isset($TOP7_DATE)) $now = strtotime($TOP7_DATE);
-	$now = time();
-	#$now = strtotime("2021-09-06 18:00:00");
 	return $now;
 }
 

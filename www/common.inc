@@ -5623,8 +5623,8 @@ function put_blog()
 
     foreach ($news as $new) {
         echo "<li>";
-        echo "<a href=\"" . $new['link'] . "\" target=\"_blank\">" . $new['title'] . "</a>\n";
-        #echo " : " . $new['description'];
+        echo "<a href=\"" . $new['link'] . "\" target=\"_blank\" title=\"" . $new['description'] . "\">" . $new['title'] . "</a>\n";
+        echo "<p>" . $new['description'] . "</p>";
         echo "</li>\n";
     }
     echo "</div>\n";
@@ -5663,35 +5663,35 @@ function get_rss($file, $nb_news)
 {
 
     $t_news = array();
+    $i = 1;
 
     if (filesize($file) == 0) {
         return $t_news;
     }
-    // ticket 58
 
-    if ($xml = simplexml_load_file($file)) {
+    $dom = new DOMDocument();
+    $dom->load($file);
+    $items = $dom->getElementsByTagName('item');
+    foreach ($items as $item) {
 
-        $i = 1;
-        foreach ($xml->channel->item as $item) {
-            $news          = array();
-            $news["title"] = $item->title;
-            $news["link"]  = $item->link;
-            $news["date"]  = $item->pubDate;
-            $s             = strip_tags($item->description, "<p>");
-            $n             = stripos($s, "</p>") + 5;
-            #echo "n=$n";
-            #$news["description"] = strip_tags(substr($s, 0, $n));
-            #$news["description"] = $item->description;
-            $description = $item->description;
-            # Issue #20 -> "/" is the delimiter to extract the title
-            $pos = stripos($description, "/");
-            $news["description"] = substr($description, 0, $pos);
-            $t_news[] = $news;
-            $i++;
-            if ($i > $nb_news) {
-                break;
-            }
+        $news = array();
+        $news["title"] = $item->getElementsByTagName('title')[0]->nodeValue;
+        $news["link"] = $item->getElementsByTagName('link')[0]->nodeValue;
+        $news["date"] = $item->getElementsByTagName('pubDate')[0]->nodeValue;
+        $news["category"] = array();
+        $categories = $item->getElementsByTagName('category');
+        foreach($categories as $category) {
+            $news["category"][] = $category->nodeValue;
         }
+        $news["description"] = $item->getElementsByTagName('description')[0]->nodeValue;
+
+        $mediaThumbnails = $item->getElementsByTagNameNS('*', 'thumbnail');
+        foreach($mediaThumbnails as $mediaThumbnail)
+            $news["img"] = $mediaThumbnail->getAttribute('url');
+        
+        $t_news[] = $news;
+        $i++;
+        if($i>$nb_news) break;
     }
     return $t_news;
 }

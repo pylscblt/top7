@@ -5620,7 +5620,7 @@ function put_blog()
     if (c_display_blog) {
         $news = get_rss(c_file_blog, c_nb_news);
     }
-
+    
     foreach ($news as $new) {
         echo "<li>";
         echo "<i>" . $new['category'][0] . " </i>\n";

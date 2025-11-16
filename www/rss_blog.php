@@ -1,56 +1,31 @@
 #!/usr/local/bin/php
-cd /home/topsevenyu/www
 <?php
 // call by crontab
 include("common.inc");
 
-function getHtmlTags($url) {
-	$input=@file_get_contents($url);
-	$regex="<a\s[^>]*href=(\"??)([^\" >]*?)\\1[^>]*>(.*)<\/a>";
-	if(preg_match_all("/$regex/siU",$input,$matches,PREG_SET_ORDER)) return $matches;
-	else return FALSE;
-}
-
 # save RSS
-file_put_contents( "/home/topsevenyu/www/" . c_file_blog, file_get_contents( c_url_blog));
+$path="/home/topsevenyu/www/";
+$path = "";
+file_put_contents($path . c_file_blog, file_get_contents( c_url_blog));
 
-// read  page categorie / Les brèves d'Ovalie to get link on last Edition
+$img_path=$path."img/";
+$login_img=$path."top7_login.jpeg";
 
-$path="/home/topsevenyu/www/img/";
-$login_img="/home/topsevenyu/www/top7_login.jpeg";
-
-# save picture
-#$url="http://www.lesbrevesdovalie.com";
-#$url="http://www.lesbrevesdovalie.com/archives/les_breves_d_ovalie___";
-$url="http://www.lesbrevesdovalie.com/tag/TOP%2014";
-$page1=getHtmlTags($url);
-if($page1) {
-	#echo "<pre>";
-	#print_r($page1);
-	#echo "</pre>";
-	foreach($page1 as $match) {
-        $pos = stripos($match[0], "data-pin-media");
-        if($pos !== false) {
-            $lines = explode("\n", $match[0]);
-            foreach($lines as $line) {
-                $pos = stripos($line, "data-pin-media");
-                if($pos !== false) {
-                    #echo "<pre>";
-                    #echo $line;
-                    #echo "</pre>";
-                    preg_match("/data-pin-media=(.*)/", $line, $match);
-                    $url = substr($match[1], 1, -1);
-                    #echo "<pre>$url</pre>";
-                    $name = end(explode("%", $url));
-                    #echo "<pre>$name</pre>";
-		            if(!file_exists($path.$name)) {
-			            file_put_contents($path.$name, file_get_contents($url));
-			            if(filesize($path.$name)>1000) copy($path.$name, $login_img);
-			        }
-                }
-            }
-            break;
+# get jpeg file from the 1st item with category=Les Breves d'Ovalie
+$news = get_rss(c_file_blog, 4);
+foreach($news as $new) {
+    if( substr($new['category'][0],0,6) === 'Les Br') {
+#    if( str_starts_with($new['category'][0], 'Les Brèves')) {
+        $img_url = $new['img'];
+        $name = basename($img_url);
+        echo "<pre>$img_url</pre>";
+        echo "<pre>$name</pre>";
+        if(!file_exists($img_path.$name)) {
+            file_put_contents($img_path.$name, file_get_contents($img_url));
+            if(filesize($img_path.$name)>1000) copy($img_path.$name, $login_img);
         }
+        break;
     }
 }
+
 ?>

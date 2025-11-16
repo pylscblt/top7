@@ -46,6 +46,7 @@ if ($t < $deadline) {
 		$game = check_date_player($_SESSION);
 		$status = $_SESSION['status'];
 		#echo "<pre>";print_r($_SESSION); echo "</pre>";
+		echo "<pre>game=$game - status=$status - day=$day - today=$today - today_00=$today_00 - monday=$monday</pre>";
 		if ($game == c_enable and $status == c_can_play) {
 			echo "<h3>send email to " . $player['pseudo'] . "</h3>";
 			send_email_next_player($_SESSION, $_SESSION['player']);

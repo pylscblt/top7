@@ -3855,7 +3855,7 @@ function display_rank($p)
     $query = "select ts.team, ";
     $query .= "t.team_long as name, ";
     $query .= "previous_season, ";
-    $query .= "sum(pc) as point, ";
+    $query .= "sum(pc)-sum(pen) as point, ";  # penalty Stade Toulousain J12 Saison 2025-2026
     $query .= "sum(J) as j, ";
     $query .= "sum(V) as v, ";
     $query .= "sum(N) as n, ";

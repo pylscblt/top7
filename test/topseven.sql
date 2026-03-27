@@ -1,13 +1,14 @@
 -- phpMyAdmin SQL Dump
--- version OVH
+-- version 4.7.5
 -- https://www.phpmyadmin.net/
 --
--- Hôte : topseven.mysql.db
--- Généré le : ven. 31 déc. 2021 à 17:06
--- Version du serveur : 5.6.50-log
--- Version de PHP : 7.4.25
+-- Host: db
+-- Generation Time: Mar 26, 2026 at 05:42 PM
+-- Server version: 5.5.58
+-- PHP Version: 7.1.9
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -18,13 +19,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de données : `topseven`
+-- Database: `topseven`
 --
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `calendar`
+-- Table structure for table `calendar`
 --
 
 CREATE TABLE `calendar` (
@@ -36,7 +37,7 @@ CREATE TABLE `calendar` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `forum`
+-- Table structure for table `forum`
 --
 
 CREATE TABLE `forum` (
@@ -53,7 +54,7 @@ CREATE TABLE `forum` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `match`
+-- Table structure for table `match`
 --
 
 CREATE TABLE `match` (
@@ -69,7 +70,7 @@ CREATE TABLE `match` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `password`
+-- Table structure for table `password`
 --
 
 CREATE TABLE `password` (
@@ -83,7 +84,7 @@ CREATE TABLE `password` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `player`
+-- Table structure for table `player`
 --
 
 CREATE TABLE `player` (
@@ -119,7 +120,7 @@ CREATE TABLE `player` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `prono`
+-- Table structure for table `prono`
 --
 
 CREATE TABLE `prono` (
@@ -134,7 +135,7 @@ CREATE TABLE `prono` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `score`
+-- Table structure for table `score`
 --
 
 CREATE TABLE `score` (
@@ -154,13 +155,14 @@ CREATE TABLE `score` (
   `J` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Joué',
   `V` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Victoire',
   `N` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Nul',
-  `D` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Défaite'
+  `D` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Défaite',
+  `pen` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Points pénalité'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
 --
--- Structure de la table `season`
+-- Table structure for table `season`
 --
 
 CREATE TABLE `season` (
@@ -175,7 +177,7 @@ CREATE TABLE `season` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `team`
+-- Table structure for table `team`
 --
 
 CREATE TABLE `team` (
@@ -189,7 +191,7 @@ CREATE TABLE `team` (
 -- --------------------------------------------------------
 
 --
--- Structure de la table `team_player`
+-- Table structure for table `team_player`
 --
 
 CREATE TABLE `team_player` (
@@ -200,23 +202,23 @@ CREATE TABLE `team_player` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Index pour les tables déchargées
+-- Indexes for dumped tables
 --
 
 --
--- Index pour la table `calendar`
+-- Indexes for table `calendar`
 --
 ALTER TABLE `calendar`
   ADD UNIQUE KEY `id` (`season`,`date`);
 
 --
--- Index pour la table `forum`
+-- Indexes for table `forum`
 --
 ALTER TABLE `forum`
   ADD PRIMARY KEY (`idx1`);
 
 --
--- Index pour la table `match`
+-- Indexes for table `match`
 --
 ALTER TABLE `match`
   ADD PRIMARY KEY (`id`),
@@ -225,19 +227,19 @@ ALTER TABLE `match`
   ADD KEY `season_day` (`season`,`day`);
 
 --
--- Index pour la table `password`
+-- Indexes for table `password`
 --
 ALTER TABLE `password`
   ADD PRIMARY KEY (`Id`);
 
 --
--- Index pour la table `player`
+-- Indexes for table `player`
 --
 ALTER TABLE `player`
   ADD PRIMARY KEY (`player_idx`);
 
 --
--- Index pour la table `prono`
+-- Indexes for table `prono`
 --
 ALTER TABLE `prono`
   ADD PRIMARY KEY (`id`),
@@ -245,7 +247,7 @@ ALTER TABLE `prono`
   ADD KEY `player` (`player`);
 
 --
--- Index pour la table `score`
+-- Indexes for table `score`
 --
 ALTER TABLE `score`
   ADD PRIMARY KEY (`id`),
@@ -253,65 +255,65 @@ ALTER TABLE `score`
   ADD KEY `day_i` (`day`);
 
 --
--- Index pour la table `season`
+-- Indexes for table `season`
 --
 ALTER TABLE `season`
   ADD UNIQUE KEY `Id` (`Id`);
 
 --
--- Index pour la table `team`
+-- Indexes for table `team`
 --
 ALTER TABLE `team`
   ADD UNIQUE KEY `Idx` (`team_idx`,`season`);
 
 --
--- Index pour la table `team_player`
+-- Indexes for table `team_player`
 --
 ALTER TABLE `team_player`
   ADD UNIQUE KEY `team_idx` (`team_idx`);
 
 --
--- AUTO_INCREMENT pour les tables déchargées
+-- AUTO_INCREMENT for dumped tables
 --
 
 --
--- AUTO_INCREMENT pour la table `forum`
+-- AUTO_INCREMENT for table `forum`
 --
 ALTER TABLE `forum`
   MODIFY `idx1` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `match`
+-- AUTO_INCREMENT for table `match`
 --
 ALTER TABLE `match`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `password`
+-- AUTO_INCREMENT for table `password`
 --
 ALTER TABLE `password`
   MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `player`
+-- AUTO_INCREMENT for table `player`
 --
 ALTER TABLE `player`
   MODIFY `player_idx` mediumint(9) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `prono`
+-- AUTO_INCREMENT for table `prono`
 --
 ALTER TABLE `prono`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `score`
+-- AUTO_INCREMENT for table `score`
 --
 ALTER TABLE `score`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT pour la table `team_player`
+-- AUTO_INCREMENT for table `team_player`
 --
 ALTER TABLE `team_player`
   MODIFY `team_idx` smallint(6) NOT NULL AUTO_INCREMENT;

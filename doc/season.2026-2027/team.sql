@@ -1,0 +1,15 @@
+INSERT INTO `team` (`team_idx`,`team_long`,`team_short`,`season`,`previous_season`) VALUES
+(1,'Bayonne','AB',12,12),
+(2,'Bordeaux-Bègles','UBB',12,8),
+(3,'Castres','CO',12,10),
+(4,'Clermont','ASM',12,7),
+(5,'La Rochelle','SR',12,6),
+(6,'Lyon','LOU',12,11),
+(7,'Montpellier','MHR',12,2),
+(8,'Paris','SF',12,3),
+(9,'Pau','SP',12,4),
+(10,'Perpignan','USAP',12,13),
+(11,'Racing 92','R92',12,5),
+(12,'Toulon','RCT',12,9),
+(13,'Toulouse','ST',12,1),
+(14,'Vannes','RCV',12,14);

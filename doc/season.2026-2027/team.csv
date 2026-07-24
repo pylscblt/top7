@@ -1,0 +1,15 @@
+team_idx,team_long,team_short,season,previous_season,,,team LNR
+1,Bayonne,AB,12,12,4,Clermont,ASM CLERMONT
+2,Bordeaux-Bègles,UBB,12,8,1,Bayonne,AVIRON BAYONNAIS
+3,Castres,CO,12,10,3,Castres,CASTRES OLYMPIQUE
+4,Clermont,ASM,12,7,6,Lyon,LOU RUGBY
+5,La Rochelle,SR,12,6,7,Montpellier,MONTPELLIER HR
+6,Lyon,LOU,12,11,11,Racing 92,RACING 92
+7,Montpellier,MHR,12,2,12,Toulon,RC TOULON
+8,Paris,SF,12,3,14,Vannes,RC VANNES
+9,Pau,SP,12,4,9,Pau,SECTION PALOISE
+10,Perpignan,USAP,12,13,8,Paris,STADE FRANÇAIS PARIS
+11,Racing 92,R92,12,5,5,La Rochelle,STADE ROCHELAIS
+12,Toulon,RCT,12,9,13,Toulouse,STADE TOULOUSAIN
+13,Toulouse,ST,12,1,2,Bordeaux-Bègles,UNION BORDEAUX-BÈGLES
+14,Vannes,RCV,12,14,10,Perpignan,USA PERPIGNAN

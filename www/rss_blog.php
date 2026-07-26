@@ -14,7 +14,8 @@ $login_img=$path."top7_login.jpeg";
 # get jpeg file from the 1st item with category=Les Breves d'Ovalie
 $news = get_rss(c_file_blog, 4);
 foreach($news as $new) {
-    if( substr($new['category'][0],0,6) === 'Les Br') {
+    print_r($new['category']);
+    if( substr($new['category'][0],0,6) === 'Les Br' || substr($new['category'][0],0,7) === 'Jeux et') {
 #    if( str_starts_with($new['category'][0], 'Les Brèves')) {
         $img_url = $new['img'];
         $name = basename($img_url);

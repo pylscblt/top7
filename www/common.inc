@@ -5918,7 +5918,7 @@ function get_top7_day_selection($day, $p)
         $i                   = 0;
         $idx                 = 0;
         $idx_barrage_day     = array(0, 0, 1, 2, 2, 1); # button to display when display=c_top7_player
-        $idx_barrage_day     = array(0, 0, 2, 1, 1, 2); # button to display when display=c_top7_player
+        #$idx_barrage_day     = array(0, 0, 2, 1, 1, 2); # button to display when display=c_top7_player
         $idx_demifinales_day = array(1, 2, 2, 1); # button to display when display=c_top7_player
         $idx_finale_day      = array(1, 2); # button to display when display=c_top7_player
         if (count($players)) {
@@ -9179,7 +9179,7 @@ function palmares($p)
     if (isset($p['season'])) {
         $season = $p['season'];
     }
-    $season = 11;
+    $season = 12;
 
     $title = "PALMARES DES CHAMPIONS";
     echo "<table id=\"palmares\" class=\"nav_stats\">\n";

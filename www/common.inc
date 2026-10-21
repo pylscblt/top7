@@ -7232,7 +7232,7 @@ function put_nav_records($p)
     echo "</td>\n";
 
     echo "<td class=\"$class\">";
-    $title    = "  ?  ";
+    $title    = "  +  ";
     $display  = c_stats_record;
     $selected = "";
     if ($to_display == $display) {

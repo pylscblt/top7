@@ -5624,7 +5624,7 @@ function put_blog()
     }
     
     foreach ($news as $new) {
-        echo "<li>";
+        echo "<li style=\"font-size: 110%\">";
         echo "<i>" . $new['category'][0] . " </i>\n";
         echo "<a href=\"" . $new['link'] . "\" target=\"_blank\" title=\"" . $new['description'] . "\">" . $new['title'] . "</a>\n";
         echo "<p>" . $new['description'] . "</p>";
@@ -7232,7 +7232,7 @@ function put_nav_records($p)
     echo "</td>\n";
 
     echo "<td class=\"$class\">";
-    $title    = "Record";
+    $title    = "  ?  ";
     $display  = c_stats_record;
     $selected = "";
     if ($to_display == $display) {
@@ -9074,7 +9074,6 @@ function put_records_divers($datas)
     $idx    = 1;
     $ranks  = array("odd", "even");
     $class0 = "point";
-    $class1 = "point_bold";
     foreach ($datas as $data) {
         $rank = $ranks[$idx % 2];
         echo "<tr class=\"$rank\">\n";
@@ -9083,8 +9082,8 @@ function put_records_divers($datas)
         echo "<td class=\"$class\">" . $data['pseudo'] . "</td>\n";
         echo "<td class=\"$class\">" . $data['team'] . "</td>\n";
         echo "<td class=\"$class\">" . $data['season'] . "</td>\n";
-        echo "<td class=\"$class1\">" . $data['pts'] . "</td>\n";
-        echo "<td text-align: left>" . $data['record'] . "</td>\n";
+        echo "<td class=\"$class\">" . $data['pts'] . "</td>\n";
+        echo "<td style=\"text-align: left; font-weight: bold\">" . $data['record'] . "</td>\n";
 
         $idx++;
         if($idx > c_records_limit) break;

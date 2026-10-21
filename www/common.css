@@ -567,7 +567,7 @@ td.score2 {
 
 
 
-td.nav, td.nav_stats {
+td.nav, td.nav_stats, td.stats {
 	text-align: center;
 }
 
@@ -602,6 +602,12 @@ th.top7 {
 th.stats {
   	background-color: #5b5d9f;
     color: white;
+	text-align: center;
+}
+th.stats_t {
+  	background-color: #5b5d9f;
+    color: white;
+	text-align: left;
 }
 th.fun_stats {
   	background-color: #5b5d9f;

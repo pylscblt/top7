@@ -108,6 +108,7 @@ define("c_stats_coiffeur", 5);
 define("c_stats_BOff", 6);
 define("c_stats_14", 7);
 define("c_stats_average", 8);
+define("c_stats_record", 9);
 
 define("c_phase_reguliere", 1);
 define("c_phase_finale", 2);
@@ -223,6 +224,7 @@ $f_debugs = array(
     #    "get_nb_different_team",
     #    "get_last_day",
     "get_player_from_email",
+    "get_records_divers",
     "display",
     #    "display_final",
     #    "display_update_match",
@@ -7229,6 +7231,16 @@ function put_nav_records($p)
     put_form_nav_records($title, $display, $selected);
     echo "</td>\n";
 
+    echo "<td class=\"$class\">";
+    $title    = "Record";
+    $display  = c_stats_record;
+    $selected = "";
+    if ($to_display == $display) {
+        $selected = "class=\"selected\"";
+    }
+    put_form_nav_records($title, $display, $selected);
+    echo "</td>\n";
+
     echo "</tr>\n";
     echo "</table>\n";
 }
@@ -7398,6 +7410,10 @@ function records($p)
         case c_stats_14:
             $datas = get_records_14($season);
             put_records_14($datas);
+            break;
+        case c_stats_record:
+            $datas = get_records_divers($season);
+            put_records_divers($datas);
             break;
         default:
             $datas = get_records_by_player($season);
@@ -7844,6 +7860,24 @@ function get_records_14($season)
     $query .= "and team_player.season <> " . c_canceled_season . " ";
     #$query .= "and d14 <> '' ";
     $query .= "order by ifnull(d14, 26) asc, eq desc, pts desc ";
+    return pdo_fetch(__FUNCTION__, c_all, $query);
+}
+
+function get_records_divers($season)
+{
+    $query = "select ";
+    $query .= "pseudo,  ";
+    $query .= "team_player.name as team, ";
+    $query .= "season.title as season, ";
+    $query .= "point as pts, ";
+    $query .= "record ";
+    $query .= "from `team_player` ";
+    $query .= "join `player` on team_player.team_idx=player.team ";
+    $query .= "join `season` on team_player.season=season.Id ";
+    $query .= "and team_player.season < $season ";
+    $query .= "and team_player.season <> " . c_canceled_season . " ";
+    $query .= "and char_length(player.record) > 0 ";
+    $query .= "order by season.Id desc ";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }
 
@@ -9013,6 +9047,45 @@ function put_records_14($datas)
         if ($data['d14'] < 14) {
             echo "</i>";
         }
+        $idx++;
+        if($idx > c_records_limit) break;
+    }
+    echo "</table>\n";
+}
+
+function put_records_divers($datas)
+{
+
+    echo "<table class=\"day\" border=0>\n";
+    // Line 1 :   #  Joueur Equipe Saison PTS Record 
+    // ---------------------------------------------------------------------------
+    $class = "stats";
+    echo "<tr>\n";
+    echo "<th class=\"$class\">#</th>\n";
+    echo "<th class=\"$class\">Joueur</th>\n";
+    echo "<th class=\"$class\">Equipe</th>\n";
+    echo "<th class=\"$class\">Saison</th>\n";
+    echo "<th class=\"$class\">PTS</th>\n"; // PTS
+
+    echo "<th class=stats_t>Record</th>\n"; 
+
+    echo "</tr>\n";
+
+    $idx    = 1;
+    $ranks  = array("odd", "even");
+    $class0 = "point";
+    $class1 = "point_bold";
+    foreach ($datas as $data) {
+        $rank = $ranks[$idx % 2];
+        echo "<tr class=\"$rank\">\n";
+
+        echo "<td class=\"point\">" . $idx . "</td>\n";
+        echo "<td class=\"$class\">" . $data['pseudo'] . "</td>\n";
+        echo "<td class=\"$class\">" . $data['team'] . "</td>\n";
+        echo "<td class=\"$class\">" . $data['season'] . "</td>\n";
+        echo "<td class=\"$class1\">" . $data['pts'] . "</td>\n";
+        echo "<td text-align: left>" . $data['record'] . "</td>\n";
+
         $idx++;
         if($idx > c_records_limit) break;
     }

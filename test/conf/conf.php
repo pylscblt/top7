@@ -13,7 +13,7 @@ $db_player = array(
 	"user"		=> "topseven",
 	"password"	=> "topseven");
 $top7_db = array(
-	"server"	=> "test-db-1",
+	"server"	=> "lamp_database",
 	"database"	=> "topseven");
 
 define("c_prod", "");

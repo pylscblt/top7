@@ -1300,8 +1300,11 @@ function put_status($p)
         echo "</table>\n";
 
         if ($status == c_msg_game_in_progress) {
-            $format   = "%A %d %b %H:%M";
-            $end_game = "(Jusqu'à " . utf8_encode(strftime($format, $p['time_game_closed'])) . ")";
+            #$format   = "%A %d %b %H:%M";
+            #$end_game = "(Jusqu'à " . utf8_encode(strftime($format, $p['time_game_closed'])) . ")";
+            $formatter = new IntlDateFormatter('fr_FR', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
+            $formatter->setPattern('EEEE d MMM HH:mm');
+            $end_game = "(Jusqu'à " . $formatter->format($p['time_game_closed']) . ")";
         } else {
             $end_game = "";
         }
@@ -1997,8 +2000,8 @@ function display($p)
                 }
             }
         }
-        print_log(__FUNCTION__, "** pseudo1", $pseudo1);
-        print_log(__FUNCTION__, "** pseudo2", $pseudo2);
+        #print_log(__FUNCTION__, "** pseudo1", $pseudo1);
+        #print_log(__FUNCTION__, "** pseudo2", $pseudo2);
 
         $class = $tr_class[$idx % 2];
 
@@ -3214,7 +3217,7 @@ function get_nb_different_teams($day, $season, $player, $t)
     $different_nb_teams = array();
     foreach ($rows as $row) {
         $n = 0;
-        if (strlen($row['ne'])) {
+        if (strlen($row['ne'] ?? '')) {
             $n = $row['ne'];
         }
 
@@ -5887,7 +5890,11 @@ function get_top7_day_selection($day, $p)
                 $status = c_can_play;
             }
 
-            $info         = "(à partir de " . utf8_encode(strftime("%A %d %b ", $deadline)) . $midi_minuit[$i % 2] . ")";
+            #$info         = "(à partir de " . utf8_encode(strftime("%A %d %b ", $deadline)) . $midi_minuit[$i % 2] . ")";
+            $formatter = new IntlDateFormatter('fr_FR', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
+            $formatter->setPattern('EEEE d MMM ');
+            $info         = "(à partir de " . $formatter->format($deadline) . $midi_minuit[$i % 2] . ")";
+
             $selections[] = $players[$player]
                 + array("deadline" => $deadline, "prono" => $prono, "status" => $status, "info" => $info);
             $i++;

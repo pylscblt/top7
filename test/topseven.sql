@@ -1,14 +1,13 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.5
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Mar 26, 2026 at 05:42 PM
--- Server version: 5.5.58
--- PHP Version: 7.1.9
+-- Generation Time: Oct 23, 2026 at 02:36 PM
+-- Server version: 8.0.46
+-- PHP Version: 8.3.36
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-SET AUTOCOMMIT = 0;
 START TRANSACTION;
 SET time_zone = "+00:00";
 
@@ -29,8 +28,8 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `calendar` (
-  `season` tinyint(4) NOT NULL,
-  `day` tinyint(4) NOT NULL,
+  `season` tinyint NOT NULL,
+  `day` tinyint NOT NULL,
   `date` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -41,14 +40,14 @@ CREATE TABLE `calendar` (
 --
 
 CREATE TABLE `forum` (
-  `idx1` int(11) NOT NULL,
-  `idx2` int(11) NOT NULL,
-  `team` smallint(6) NOT NULL,
-  `player` mediumint(9) NOT NULL,
-  `season` tinyint(4) NOT NULL DEFAULT '0',
-  `day` tinyint(4) NOT NULL,
+  `idx1` int NOT NULL,
+  `idx2` int NOT NULL,
+  `team` smallint NOT NULL,
+  `player` mediumint NOT NULL,
+  `season` tinyint NOT NULL DEFAULT '0',
+  `day` tinyint NOT NULL,
   `date` datetime NOT NULL,
-  `comment` text CHARACTER SET utf8mb4
+  `comment` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -58,11 +57,11 @@ CREATE TABLE `forum` (
 --
 
 CREATE TABLE `match` (
-  `id` int(11) NOT NULL,
-  `season` tinyint(4) DEFAULT '0',
-  `day` tinyint(4) NOT NULL,
-  `team1` tinyint(4) NOT NULL COMMENT 'Equipe locale',
-  `team2` tinyint(4) NOT NULL COMMENT 'Equipe visiteur',
+  `id` int NOT NULL,
+  `season` tinyint DEFAULT '0',
+  `day` tinyint NOT NULL,
+  `team1` tinyint NOT NULL COMMENT 'Equipe locale',
+  `team2` tinyint NOT NULL COMMENT 'Equipe visiteur',
   `date` date NOT NULL,
   `time` time NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -74,11 +73,11 @@ CREATE TABLE `match` (
 --
 
 CREATE TABLE `password` (
-  `Id` int(11) NOT NULL,
-  `player` mediumint(9) NOT NULL,
-  `status` tinyint(4) NOT NULL,
+  `Id` int NOT NULL,
+  `player` mediumint NOT NULL,
+  `status` tinyint NOT NULL,
   `keyword` varchar(32) NOT NULL,
-  `time` int(11) NOT NULL
+  `time` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -88,34 +87,34 @@ CREATE TABLE `password` (
 --
 
 CREATE TABLE `player` (
-  `player_idx` mediumint(9) NOT NULL,
-  `season` tinyint(4) NOT NULL DEFAULT '0',
-  `status` tinyint(4) NOT NULL DEFAULT '0',
+  `player_idx` mediumint NOT NULL,
+  `season` tinyint NOT NULL DEFAULT '0',
+  `status` tinyint NOT NULL DEFAULT '0',
   `name` varchar(50) NOT NULL,
   `pseudo` varchar(40) NOT NULL,
   `captain` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Capitaine',
-  `rank` tinyint(4) NOT NULL,
-  `rankFinal` tinyint(4) NOT NULL,
-  `point` smallint(6) NOT NULL,
-  `J` tinyint(4) NOT NULL COMMENT 'Joué',
-  `G` tinyint(4) NOT NULL COMMENT 'Gagné',
-  `N` tinyint(4) NOT NULL COMMENT 'Nul',
-  `P` tinyint(4) NOT NULL COMMENT 'Perdu',
-  `team` smallint(6) NOT NULL,
+  `rank` tinyint NOT NULL,
+  `rankFinal` tinyint NOT NULL,
+  `point` smallint NOT NULL,
+  `J` tinyint NOT NULL COMMENT 'Joué',
+  `G` tinyint NOT NULL COMMENT 'Gagné',
+  `N` tinyint NOT NULL COMMENT 'Nul',
+  `P` tinyint NOT NULL COMMENT 'Perdu',
+  `team` smallint NOT NULL,
   `email` varchar(120) NOT NULL,
   `password` varchar(32) NOT NULL,
   `date_reg` datetime NOT NULL,
-  `pm` int(11) NOT NULL COMMENT 'Points Marqués',
-  `pe` int(11) NOT NULL COMMENT 'Points Encaissés',
-  `ve` tinyint(4) NOT NULL COMMENT 'Victoires Extérieures',
-  `evo` tinyint(4) NOT NULL COMMENT 'Evolution',
-  `fun` int(11) NOT NULL COMMENT 'Points fun',
-  `bd` tinyint(4) NOT NULL,
-  `bo` tinyint(4) NOT NULL,
-  `pc` tinyint(4) NOT NULL COMMENT 'Points coiffeur',
-  `eq` tinyint(4) NOT NULL COMMENT 'Equipes différentes',
-  `d14` tinyint(4) DEFAULT NULL COMMENT 'Journée pour 14 équipes différentes'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `pm` int NOT NULL COMMENT 'Points Marqués',
+  `pe` int NOT NULL COMMENT 'Points Encaissés',
+  `ve` tinyint NOT NULL COMMENT 'Victoires Extérieures',
+  `evo` tinyint NOT NULL COMMENT 'Evolution',
+  `fun` int NOT NULL COMMENT 'Points fun',
+  `bd` tinyint NOT NULL,
+  `bo` tinyint NOT NULL,
+  `pc` tinyint NOT NULL COMMENT 'Points coiffeur',
+  `eq` tinyint NOT NULL COMMENT 'Equipes différentes',
+  `d14` tinyint DEFAULT NULL COMMENT 'Journée pour 14 équipes différentes'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -124,12 +123,12 @@ CREATE TABLE `player` (
 --
 
 CREATE TABLE `prono` (
-  `id` int(11) NOT NULL,
-  `season` tinyint(4) NOT NULL DEFAULT '0',
-  `day` tinyint(4) NOT NULL,
-  `player` smallint(6) NOT NULL,
-  `match` mediumint(9) NOT NULL,
-  `team` tinyint(4) NOT NULL
+  `id` int NOT NULL,
+  `season` tinyint NOT NULL DEFAULT '0',
+  `day` tinyint NOT NULL,
+  `player` smallint NOT NULL,
+  `match` mediumint NOT NULL DEFAULT '0',
+  `team` tinyint NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
@@ -139,18 +138,18 @@ CREATE TABLE `prono` (
 --
 
 CREATE TABLE `score` (
-  `id` int(11) NOT NULL,
-  `season` tinyint(4) NOT NULL DEFAULT '0',
-  `day` tinyint(4) NOT NULL COMMENT 'Journée championnat',
-  `team` tinyint(4) NOT NULL COMMENT 'Equipe championnat',
-  `rank` tinyint(4) NOT NULL,
-  `pm` smallint(6) NOT NULL COMMENT 'Points marqués',
-  `pe` smallint(6) NOT NULL COMMENT 'Points encaissés',
-  `pc` tinyint(4) NOT NULL COMMENT 'Points championnat',
+  `id` int NOT NULL,
+  `season` tinyint NOT NULL DEFAULT '0',
+  `day` tinyint NOT NULL COMMENT 'Journée championnat',
+  `team` tinyint NOT NULL COMMENT 'Equipe championnat',
+  `rank` tinyint NOT NULL,
+  `pm` smallint NOT NULL COMMENT 'Points marqués',
+  `pe` smallint NOT NULL COMMENT 'Points encaissés',
+  `pc` tinyint NOT NULL COMMENT 'Points championnat',
   `bd` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Bonus défensif',
   `bo` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Bonus offensif',
-  `em` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Essais Marqués',
-  `ee` tinyint(4) NOT NULL DEFAULT '0' COMMENT 'Essais Encaissés',
+  `em` tinyint NOT NULL DEFAULT '0' COMMENT 'Essais Marqués',
+  `ee` tinyint NOT NULL DEFAULT '0' COMMENT 'Essais Encaissés',
   `ve` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Victoire extérieure',
   `J` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Joué',
   `V` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'Victoire',
@@ -166,8 +165,8 @@ CREATE TABLE `score` (
 --
 
 CREATE TABLE `season` (
-  `Id` tinyint(4) NOT NULL,
-  `title` varchar(40) CHARACTER SET utf8 NOT NULL,
+  `Id` tinyint NOT NULL,
+  `title` varchar(40) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci NOT NULL,
   `start` date NOT NULL,
   `start_register` date NOT NULL,
   `stop_register` date NOT NULL,
@@ -183,10 +182,10 @@ CREATE TABLE `season` (
 CREATE TABLE `team` (
   `team_short` text NOT NULL,
   `team_long` varchar(50) NOT NULL,
-  `team_idx` tinyint(4) NOT NULL,
-  `season` tinyint(4) NOT NULL,
-  `previous_season` tinyint(4) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `team_idx` tinyint NOT NULL,
+  `season` tinyint NOT NULL,
+  `previous_season` tinyint NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- --------------------------------------------------------
 
@@ -195,11 +194,11 @@ CREATE TABLE `team` (
 --
 
 CREATE TABLE `team_player` (
-  `team_idx` smallint(6) NOT NULL,
+  `team_idx` smallint NOT NULL,
   `name` varchar(50) NOT NULL,
-  `season` tinyint(4) NOT NULL DEFAULT '0',
-  `status` tinyint(4) NOT NULL DEFAULT '0'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `season` tinyint NOT NULL DEFAULT '0',
+  `status` tinyint NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 --
 -- Indexes for dumped tables
@@ -280,43 +279,43 @@ ALTER TABLE `team_player`
 -- AUTO_INCREMENT for table `forum`
 --
 ALTER TABLE `forum`
-  MODIFY `idx1` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idx1` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `match`
 --
 ALTER TABLE `match`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `password`
 --
 ALTER TABLE `password`
-  MODIFY `Id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `Id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `player`
 --
 ALTER TABLE `player`
-  MODIFY `player_idx` mediumint(9) NOT NULL AUTO_INCREMENT;
+  MODIFY `player_idx` mediumint NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `prono`
 --
 ALTER TABLE `prono`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `score`
 --
 ALTER TABLE `score`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `team_player`
 --
 ALTER TABLE `team_player`
-  MODIFY `team_idx` smallint(6) NOT NULL AUTO_INCREMENT;
+  MODIFY `team_idx` smallint NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

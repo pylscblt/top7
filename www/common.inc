@@ -401,7 +401,8 @@ function sql($login)
 {
     global $strDate;
     setlocale(LC_TIME, 'fr_FR', 'fra');
-    $strDate = mb_convert_encoding('%a %d %b %Y %H:%M', 'ISO-8859-9', 'UTF-8');
+    #$strDate = mb_convert_encoding('%a %d %b %Y %H:%M', 'ISO-8859-9', 'UTF-8');
+    $strDate = mb_convert_encoding('E dd LLL yyy HH:MM', 'ISO-8859-9', 'UTF-8');  # ICU format
 
     global $top7_db;
     $server   = $top7_db['server'];
@@ -488,6 +489,24 @@ function pdo_insert($function, $query, $data)
     }
     return $r;
 }
+
+function strftimeICU($format, $ts) {
+    # Since strftime() is deprecated and replaced by IntlDateFormatter()
+    # See https://unicode-org.github.io/icu/userguide/format_parse/datetime/
+    #
+    # strftime            IntlDateFormatter        Example
+    # "%A %d %b %H:%M"    'EEEE dd MMM HH:mm'      lundi 02 Jan 14:30 
+    # "%A %d %b"          'EEEE dd MMM'            lundi 02 Jan 
+    # '%a %d %b %Y %H:%M' 'E dd LLL yyyy HH:mm'    lun 02 Jan 2026 14:30
+    # '%d %B'             'dd MMMM'                02 Janvier
+    # "%Y-%m-%d %H:%M"    'yyyy-MM-dd HH:mm'       2026-01-02 14:30 
+    # "%Y-%m-%d %H:%M:%S" 'yyyy-MM-dd HH:mm:ss'    2026-01-02 14:30:10 
+    #
+    $formatter = new IntlDateFormatter('fr_FR', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
+    $formatter->setPattern($format);
+    return mb_convert_encoding($formatter->format($ts), 'UTF-8', 'ISO-8859-1');
+}
+
 
 function display_select_player($top7team, $selected_player)
 {
@@ -1065,8 +1084,8 @@ function get_selection_order($p)
     // th.opened
     $style = "background-color: #FAFAE0; color: green; text-align: center;";
     $ret .= "<tr><th colspan=\"2\" style=\"$style\">$title - $status</th></tr>\n";
-    $format   = "%A %d %b %H:%M";
-    $end_game = "(Jusqu'à " . utf8_encode(strftime($format, $p['time_game_closed'])) . ")";
+    $format   = "EEEE dd MMM HH:mm"; #"%A %d %b %H:%M";
+    $end_game = "(Jusqu'à " . strftimeICU($format, $p['time_game_closed']) . ")";
 
     // td.status
     $style1 = "background-color: #FAFAE0; color: black; text-align: center; font-weight: bold;";
@@ -1300,11 +1319,8 @@ function put_status($p)
         echo "</table>\n";
 
         if ($status == c_msg_game_in_progress) {
-            #$format   = "%A %d %b %H:%M";
-            #$end_game = "(Jusqu'à " . utf8_encode(strftime($format, $p['time_game_closed'])) . ")";
-            $formatter = new IntlDateFormatter('fr_FR', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
-            $formatter->setPattern('EEEE d MMM HH:mm');
-            $end_game = "(Jusqu'à " . $formatter->format($p['time_game_closed']) . ")";
+            $format   = "EEEE dd MMM HH:mm"; #"%A %d %b %H:%M";
+            $end_game = "(Jusqu'à " . strftimeICU($format, $p['time_game_closed']) . ")";
         } else {
             $end_game = "";
         }
@@ -1676,15 +1692,15 @@ function display($p)
 
         $score1  = $match['score1'];
         $score2  = $match['score2'];
-        $v1      = $match['v1'];
-        $v2      = $match['v2'];
+        $v1      = $match['v1'] ?? null;
+        $v2      = $match['v2'] ?? null;
         $team1   = $match['team1'];
         $team2   = $match['team2'];
         $detail1 = array("try" => $match['try1'], "bo" => $match['bo1'], "bd" => $match['bd1']);
         $detail2 = array("try" => $match['try2'], "bo" => $match['bo2'], "bd" => $match['bd2']);
 
         if ($display == c_top14 or $display == c_team14 or $display == c_top7_match) {
-            $datetime = utf8_encode(strftime($strDate, strtotime($match['date'] . " " . $match['time'])));
+            $datetime = strftimeICU($strDate, strtotime($match['date'] . " " . $match['time']));
             $top_day  = "";
             if ($display == c_team14 or $display == c_top7_match) {
                 if ($match['day'] > c_last_day) {
@@ -4328,7 +4344,7 @@ function put_new_password_form($key, $status, $pseudo, $email, $errors)
         echo "<td align=\"left\">";
         echo "Attention ! <br>";
         foreach ($errors as $error) {
-            echo "<li>" . utf8_encode($error) . "</li>\n";
+            echo "<li>" . $error . "</li>\n";
         }
         echo "</td>";
         echo "</tr>";
@@ -4592,7 +4608,6 @@ function put_register_form($team, $pseudos, $emails, $errors, $action="register"
         echo "Il y a quelques erreurs à corriger dans les champs sur fond rouge :\n";
         echo "<ul>\n";
         foreach ($errors["msg"] as $msg) {
-            #echo "<li>" . utf8_encode($msg) . "</li>\n";
             echo "<li>" . $msg . "</li>\n";
         }
 
@@ -4745,7 +4760,7 @@ function put_login_form($token)
     $display_register_link = false;
     if ($now >= $season_start and $now < $stop_register) {
         if ($now < ($start_register - 3600*24)) {
-            echo "<div class=\"season\">Crée ton équipe dès le " . strftime("%d %B", $start_register) . " !</div>";
+            echo "<div class=\"season\">Crée ton équipe dès le " . strftimeICU("dd MMMM", $start_register) . " !</div>";
         } else {
             echo "<div class=\"season\">Crée ton équipe maintenant !</div>";
             $display_register_link = true;
@@ -4839,7 +4854,7 @@ function display_info_player($player, $p)
     $palmares = get_palmares_player($info['email']);
     $team     = get_top7team_name($info['team']);
     $captain  = get_top7team_captain($info['team']);
-    $date_reg = utf8_encode(strftime($strDate, strtotime($info['date_reg'])));
+    $date_reg = strftimeICU($strDate, strtotime($info['date_reg']));
 
     $password = get_last_password_email($player);
 
@@ -5384,8 +5399,8 @@ function update_forum($p, $s)
     $player  = $s['player'];
     $day     = $s['day'];
     $season  = $s['season'];
-    $format  = "%Y-%m-%d %H:%M";
-    $date    = strftime($format, now());
+    $format  = "yyyy-MM-dd HH:mm"; # "%Y-%m-%d %H:%M";
+    $date    = strftimeICU($format, now());
     $parent  = $p['parent'];
     $comment = addslashes($p['comment']);
 
@@ -5890,10 +5905,7 @@ function get_top7_day_selection($day, $p)
                 $status = c_can_play;
             }
 
-            #$info         = "(à partir de " . utf8_encode(strftime("%A %d %b ", $deadline)) . $midi_minuit[$i % 2] . ")";
-            $formatter = new IntlDateFormatter('fr_FR', IntlDateFormatter::NONE, IntlDateFormatter::NONE);
-            $formatter->setPattern('EEEE d MMM ');
-            $info         = "(à partir de " . $formatter->format($deadline) . $midi_minuit[$i % 2] . ")";
+            $info         = "(à partir de " . strftimeICU("EEEE dd MMM ", $deadline) . $midi_minuit[$i % 2] . ")";
 
             $selections[] = $players[$player]
                 + array("deadline" => $deadline, "prono" => $prono, "status" => $status, "info" => $info);
@@ -5965,7 +5977,7 @@ function get_top7_day_selection($day, $p)
                         $prono = c_played;
                     }
 
-                    $info         = "(à partir de " . utf8_encode(strftime("%A %d %b ", $deadline)) . $midi_minuit[0] . ")";
+                    $info         = "(à partir de " . strftimeICU("EEEE dd MMM ", $deadline) . $midi_minuit[0] . ")";
                     //$selections[] = $players[$player]
                     // + array("deadline" => $deadline, "prono" => $prono, "status" => $status, "info" => $info, 'idx' => $idx);
                     $selections[] = array_merge(
@@ -6603,8 +6615,8 @@ function send_email_forum($p, $s)
     $team    = $s['top7team'];
     $player  = $s['player'];
     $day     = $s['day'];
-    $format  = "%Y-%m-%d %H:%M";
-    $date    = strftime($format, now());
+    $format  = "yyyy-MM-dd HH:mm"; # "%Y-%m-%d %H:%M";
+    $date    = strftimeICU($format, now());
     $parent  = $p['parent'];
     $comment = $p['comment'];
     $author  = get_pseudo_from_player($player);
@@ -6808,8 +6820,8 @@ function update_register($pseudo, $email, $password)
 
     if ($status == c_player_waiting) {
         $status   = c_player_enable;
-        $format   = "%Y-%m-%d %H:%M";
-        $date_reg = strftime($format, now());
+        $format   = "yyyy-MM-dd HH:mm"; # "%Y-%m-%d %H:%M";
+        $date_reg = strftimeICU($format, now());
     }
 
     printr_log(__FUNCTION__, "data", array($password, $status, $date_reg, $pseudo, $email));
@@ -6831,8 +6843,8 @@ function insert_new_player($pseudo, $email, $team, $captain)
     $season      = $top7_season['Id'];
 
     $status   = c_player_waiting;
-    $format   = "%Y-%m-%d %H:%M";
-    $date_reg = strftime($format, now());
+    $format   = "yyyy-MM-dd HH:mm"; # "%Y-%m-%d %H:%M";
+    $date_reg = strftimeICU($format, now());
     $query  = "insert into player (season, pseudo, password, email, status, team, captain, date_reg) ";
     $query .= "value (:season, :pseudo, :password, :email, :status, :team,  :captain, :date_reg)";
     $data = array(
@@ -6855,8 +6867,8 @@ function insert_same_player($pseudo, $password, $email, $team, $captain)
     $season      = $top7_season['Id'];
 
     $status   = c_player_enable;
-    $format   = "%Y-%m-%d %H:%M:%S";
-    $date_reg = strftime($format, now());
+    $format   = "yyyy-MM-dd HH:mm:ss"; # "%Y-%m-%d %H:%M:%S";
+    $date_reg = strftimeICU($format, now());
     $query  = "insert into player (season, pseudo, password, email, status, team, captain, date_reg) ";
     $query .= "value (:season, :pseudo, :password, :email, :status, :team,  :captain, :date_reg)";
     $data = array(
@@ -6988,7 +7000,7 @@ function display_info_team($p)
     $players       = get_top7team_players($top7team);
     $date_last_reg = get_info_team_date_reg($top7team);
     #$date_reg = utf8_encode( strftime( $strDate, strtotime( $players[0]['date_reg'])));  // date_reg captain
-    $date_reg = utf8_encode(strftime($strDate, strtotime($date_last_reg['date_reg']))); // last date_reg  = tema registering
+    $date_reg = strftimeICU($strDate, strtotime($date_last_reg['date_reg'])); // last date_reg  = tema registering
 
     $line = c_line_info;
     $div  = "";
@@ -7065,19 +7077,13 @@ function send_email($p)
     $msg .= $p['msg'];
     $msg .= "<br>_________________________________________<br>";
     $msg .= "<a href=\"" . c_url_top7 . "\">www.topseven.fr</a><br>";
-    #$msg .= "<br>".strftime(" %d/%m/%Y %H:%M")."</pre>";
     $msg .= "</body></html>";
-
-    #$subject = utf8_encode( $subject);
-    #$msg = utf8_encode( $msg);
 
     if (!$debug_email) {
         mail($dest, $subject, $msg, $headers);
     }
 
     mail(c_email_pyl, $subject, $msg, $headers);
-    #mail( "pylscblt@gmail.com", $subject, $msg, $headers);
-    #echo $msg;
 }
 
 function get_exec_time()

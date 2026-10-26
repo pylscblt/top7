@@ -2842,6 +2842,19 @@ function update_match($p)
         $bd1    = $bd2    = 0;
     }
 
+    $bd1 = (int) $bd1;
+    $bd2 = (int) $bd2;
+    $bo1 = (int) $bo1;
+    $bo2 = (int) $bo2;
+    $ve = (int) $ve;
+    $played = (int) $played;
+    $v1 = (int) $v1;
+    $v2 = (int) $v2;
+    $n1 = (int) $n1;
+    $n2 = (int) $n2;
+    $d1 = (int) $d1;
+    $d2 = (int) $d2;
+
     $query = "update `score` ";
     $query .= "set `pm`='$score1', `pe`='$score2', `em`='$try1', `ee`='$try2', `bo`='$bo1', `bd`='$bd1', `pc`='$point1', ";
     $query .= "`J`='$played', `V`='$v1', `N`='$n1', `D`='$d1'  ";

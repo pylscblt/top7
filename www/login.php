@@ -3,7 +3,7 @@
 	include("common.inc");
 
 	printr_log("login.php", "_POST", $_POST);
-	printr_log("login.php", "_SESSION", $_SESSION);
+	if (isset($_SESSION)) printr_log("login.php", "_SESSION", $_SESSION);
 
 	# TODO See how to use the flag $captcha
 	if (isset($_POST['g-recaptcha-response'])) {
@@ -28,7 +28,7 @@
 
 			if( $_POST['login'] == c_admin_login and $_POST['password'] == c_admin_password) {
 
-				session_start();
+				#session_start();
 				init_sql();
 				init_time_session();
 				$_SESSION['login'] 		= $_POST['login'];
@@ -36,13 +36,14 @@
 				$_SESSION['mode'] 		= c_admin;
 				$_SESSION['display'] 	= c_top14;
 				$_SESSION['captain'] 	= "";
+				$_SESSION['register_new_season'] =  false;
 
 				header( 'location: update_day');
 			}
 
 			if( $player = check_player( $_POST)) {
 
-				session_start();
+				#session_start();
 				init_time_session();
 				$_SESSION['login'] 	    = $player['email'];
 				$_SESSION['pseudo'] 	= $player['pseudo'];
@@ -52,7 +53,7 @@
 				$_SESSION['display'] 	= c_top7;
 				$_SESSION['mode'] 		= c_guest;
 				$_SESSION['game']       = c_disable;
-				$_SESSION['register_new_season'] = 0;
+				$_SESSION['register_new_season'] =  false;
 				$_SESSION['top7team_to_register'] = $player['team'];
 				$top7_season = get_top7_season();
 				$_SESSION['season'] = $top7_season['Id'];

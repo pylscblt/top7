@@ -362,14 +362,14 @@ function print_header_register()
 }
 function print_header()
 {
-    echo "<html>\n";
+    #echo "<html>\n";
     print_header_head("", false, false);
     echo "<body class=\"top7\">\n";
 }
 
 function print_header_display($t)
 {
-    echo "<html>\n";
+    #echo "<html>\n";
     print_header_head("", false, true);
     echo "<body class=\"top7\" onLoad=\"display_c( $t);\">\n";
 }
@@ -2178,9 +2178,9 @@ function display($p)
         echo "<input type=\"submit\"  id=\"ValidPronoButton\" value=\"Valider le prono\">\n";
         echo "</form>\n";
         echo "</td></tr>\n";
+        echo "</table>\n";
     }
 
-    echo "</table>\n";
 }
 
 function display_select_calendar($teams, $team_idx, $team_nb, $id)
@@ -3437,18 +3437,18 @@ function display_final($p)
 
     $results    = array();
     $ranks      = get_rank7_finales($season, c_finale_day, $top7team, c_winner);
-    $results[1] = $ranks[0];
+    $results[1] = $ranks[0] ?? null;
 
     $ranks      = get_rank7_finales($season, c_finale_day, $top7team, c_loser);
-    $results[2] = $ranks[0];
+    $results[2] = $ranks[0] ?? null;
 
     $ranks = get_rank7_finales($season, c_demifinales_day, $top7team, c_loser);
     if (count($ranks) == 1) {
         $results[3] = "";
         $results[4] = $ranks[0];
     } else {
-        $results[3] = $ranks[0];
-        $results[4] = $ranks[1];
+        $results[3] = $ranks[0] ?? null;
+        $results[4] = $ranks[1] ?? null;
     }
 
     $ranks = get_rank7_finales($season, c_barrage_day, $top7team, c_loser);
@@ -3456,8 +3456,8 @@ function display_final($p)
         $results[5] = "";
         $results[6] = $ranks[0];
     } else {
-        $results[5] = $ranks[0];
-        $results[6] = $ranks[1];
+        $results[5] = $ranks[0] ?? null;
+        $results[6] = $ranks[1] ?? null;
     }
 
     $ranks      = get_rank7(c_last_day, $top7team);
@@ -6015,7 +6015,7 @@ function init_time_session()
     date_default_timezone_set('Europe/Paris');
 
     $top7_season = get_top7_season();
-    print_log(__FUNCTION__, "top7_season", $top7_season);
+    printr_log(__FUNCTION__, "top7_season", $top7_season);
 
     if (isset($_SESSION['season'])) {
         $season = $_SESSION['season'];
@@ -6300,9 +6300,13 @@ function check_player($p)
     printr_log(__FUNCTION__, "login", $p['login']);
     init_sql();
 
+    $top7_season = get_top7_season();
+    $season = $top7_season['Id'];
+    print_log(__FUNCTION__, "season", $season);
+
     global $pdo;
     $query = "select player_idx as player, season, pseudo, team, email, password, captain from player ";
-    $query .= "where email=?  order by player_idx desc limit 1";
+    $query .= "where email=?  and season=$season  order by player_idx desc limit 1";
     $row = pdo_fetch_param(__FUNCTION__, c_one, $query, array($p['login']));
 
     if (isset($row['password']) and $row['password'] == md5($p['password'])) {
@@ -9358,6 +9362,9 @@ function palmares($p)
 
 class Exaequo
 {
+    public int $idx;
+    public $arr;
+
     function __construct()
     {
         $this->idx = 0;

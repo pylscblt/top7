@@ -4036,7 +4036,7 @@ function get_score_player($player)
     // ne : Nbre d'équipes différentes qui ont été sélectionnées
     $query = "select day, team, count( team) as ne ";
     $query .= "from prono where player=$player ";
-    $query .= "group by team ";
+    $query .= "group by team, day ";
     $query .= "order by day";
     $rows = pdo_fetch(__FUNCTION__, c_all, $query);
     $ne   = array();

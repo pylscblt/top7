@@ -9268,7 +9268,7 @@ function get_palmares($season)
     $query .= "and team_player.season < $season ";
     $query .= "and team_player.season <> " . c_canceled_season . " ";
     $query .= "and player.rankFinal = 1 ";
-    $query .= "group by team_player.team_idx ";
+    $query .= "group by team_player.team_idx, pseudo, point ";
     $query .= "order by season.Id";
     return pdo_fetch(__FUNCTION__, c_all, $query);
 }

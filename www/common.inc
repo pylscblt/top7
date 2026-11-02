@@ -6356,9 +6356,15 @@ function get_palmares_player($email)
     $rows     = pdo_fetch(__FUNCTION__, c_all, $query);
     $palmares = array();
     foreach ($rows as $row) {
+        if ($row['rankFinal'] > 0) {
+            $rank = $title_phase_finale[$row['rankFinal'] - 1]; 
+        }
+        else {
+            $rank = null;
+        }
         $palmares[] = array(
             "title"      => $row['title'],
-            "rank"       => $title_phase_finale[$row['rankFinal'] - 1],
+            "rank"       => $rank,
             "player_idx" => $row['player_idx'],
             "season"     => $row['season'],
         );
